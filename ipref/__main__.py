@@ -15,15 +15,15 @@ def parse_args():
 
     # fmt: off
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("-v", "--version", action="version", version=__version__, help="Show version and exit.")
-    parser.add_argument("-d", "--debug", action="store_true", help="Enable logging for debug.")
-    parser.add_argument("-c", "--config", type=str, default=None, help="")
-    parser.add_argument("-I", "--input-type", type=str, default="ip", choices=INPUT_TYPES, help="Input type [ip, file]")
-    parser.add_argument("-O", "--output-format", type=str, default="json", choices=OUTPUT_FORMATS, help="Output format [json, jsonl, csv, tsv]")
-    parser.add_argument("--csv-columns", type=str, default=None, help="[CSV] CSV columns.")
-    parser.add_argument("--csv-exclude-header", action="store_true", help="[CSV] Exclude a header in the CSV results.")
-    parser.add_argument("--csv-escape-comma", action="store_true", help="[CSV] Escape commas (,) to <comma>. This is useful when you process the CSV results in commands such as 'cut'.")
-    parser.add_argument("items", type=str, nargs="*", help="IP addresses or filenames.")
+    parser.add_argument("-v", "--version", action="version", version=__version__, help="show version and exit.")
+    parser.add_argument("-d", "--debug", action="store_true", help="enable debug logging to stderr.")
+    parser.add_argument("-c", "--config", default=None, help="path to config file.")
+    parser.add_argument("-I", "--input-type", default="ip", choices=INPUT_TYPES, help="input type.")
+    parser.add_argument("-O", "--output-format", default="json", choices=OUTPUT_FORMATS, help="output format.")
+    parser.add_argument("--csv-columns", default=None, help="[csv] CSV columns separated by comma (,).")
+    parser.add_argument("--csv-exclude-header", action="store_true", help="[csv] exclude a csv header.")
+    parser.add_argument("--csv-escape-comma", action="store_true", help="[csv] escape commas (,) to <comma> (useful when using commands such as 'cut').")
+    parser.add_argument("items", type=str, nargs="*", help="IP addresses or filenames. if input_type is file and the items are empty, stdin is used.")
     # fmt: on
 
     return parser.parse_args()
