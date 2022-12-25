@@ -10,7 +10,6 @@ import yaml
 DEFAULT_CONFIG = {
     "dns": {
         "enable_reverse_lookup": False,
-        "server": None,
         "timeout": 5,
         "num_workers": 100,
     },

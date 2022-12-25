@@ -1,7 +1,6 @@
 # DNS lookups
 dns:
   enable_reverse_lookup: false
-  server: null
   timeout: 5
   num_workers: 100
 
