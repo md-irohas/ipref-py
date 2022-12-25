@@ -154,6 +154,7 @@ def test_runner_dump(runner, results):
     runner.dump(results, output_format="json")
     runner.dump(results, output_format="jsonl")
     runner.dump(results, output_format="csv")
+    runner.dump(results, output_format="tsv")
 
     with pytest.raises(ValueError):
         runner.dump(results, output_format="not-supported")
@@ -178,3 +179,4 @@ def test_parse_input_data(capsys, monkeypatch):
 
 def test_run():
     run(["192.0.2.0", "not-ip"], input_type="ip")
+    run([], input_type="ip")

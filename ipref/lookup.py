@@ -15,7 +15,7 @@ from .data.geoip import GeoIPDB
 from .util import get_dot_item, ip_address_types, is_ip_address, split_data
 
 INPUT_TYPES = {"ip", "file"}
-OUTPUT_FORMATS = {"json", "jsonl", "csv"}
+OUTPUT_FORMATS = {"json", "jsonl", "csv", "tsv"}
 
 log = logging.getLogger(__name__)
 
@@ -175,13 +175,14 @@ class Runner:
         results,
         fp=sys.stdout,
         columns=None,
+        delimiter=",",
         include_header=True,
         escape_comma=False,
     ):
         if columns is None:
             columns = self.config["columns"]
 
-        writer = csv.writer(fp, dialect="unix", quoting=csv.QUOTE_MINIMAL)
+        writer = csv.writer(fp, dialect="unix", quoting=csv.QUOTE_MINIMAL, delimiter=delimiter)
 
         if include_header:
             writer.writerow(columns)
@@ -205,10 +206,16 @@ class Runner:
             self.dump_as_json(results)
         elif output_format == "jsonl":
             self.dump_as_json_lines(results)
-        elif output_format == "csv":
+        elif output_format == "csv" or output_format == "tsv":
+            if output_format == "csv":
+                delimiter = ","
+            else:
+                delimiter = "\t"
+
             self.dump_as_csv(
                 results,
                 columns=csv_columns,
+                delimiter=delimiter,
                 include_header=csv_include_header,
                 escape_comma=csv_escape_comma,
             )
