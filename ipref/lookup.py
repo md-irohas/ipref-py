@@ -3,6 +3,7 @@
 
 import csv
 import ipaddress
+import logging
 import json
 import sys
 from types import SimpleNamespace
@@ -15,6 +16,8 @@ from .util import get_dot_item, ip_address_types, is_ip_address, split_data
 
 INPUT_TYPES = {"ip", "file"}
 OUTPUT_FORMATS = {"json", "jsonl", "csv"}
+
+log = logging.getLogger(__name__)
 
 
 def is_valid_input_type(s):
@@ -247,6 +250,11 @@ def run(
     geoip_db.setup_dbs(**config["geoip"])
 
     data = parse_input_data(input_data, input_type)
+    log.info("# of input data: %d", len(data))
+
+    if len(data) == 0:
+        log.warning("no input data found.")
+        return
 
     r = Runner(config)
     results = r.lookup(data)
