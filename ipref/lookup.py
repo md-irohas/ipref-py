@@ -67,10 +67,16 @@ class Result:
     def __getitem__(self, key):
         return get_dot_item(self, key)
 
+    def to_row(self, columns, escape_comma=False):
+        return [
+                escape_csv_column(self[column], escape_comma=escape_comma)
+                for column in columns
+            ]
+
     def to_dict(self):
         return {
             "meta": {
-                "version": "ipref-" + __version__,
+                "version": __name__.split(".")[0] + "-" + __version__,
                 "ip_address": self.meta.ip_address,
                 "ip_address_types": self.meta.ip_address_types,
             },
@@ -157,10 +163,17 @@ class Runner:
 
         return True
 
-    def lookup(self, ips):
+    def lookup(self, ips, skip_dns_reverse_lookup=False):
+        log.info("Lookup %d input.", len(ips))
         results = self._init_results(ips)
+
+        log.info("Lookup in GeoIP databases.")
         self._lookup_geoip_dbs(results)
+
+        log.info("Lookup in DNS.")
         self._lookup_dns(results)
+
+        log.info("Lookup done.")
         return results
 
     def dump_as_json(self, results, fp=sys.stdout):
@@ -183,16 +196,11 @@ class Runner:
             columns = self.config["columns"]
 
         writer = csv.writer(fp, dialect="unix", quoting=csv.QUOTE_MINIMAL, delimiter=delimiter)
-
         if include_header:
             writer.writerow(columns)
 
         for result in results:
-            row = [
-                escape_csv_column(result[column], escape_comma=escape_comma)
-                for column in columns
-            ]
-            writer.writerow(row)
+            writer.writerow(result.to_row(columns, escape_comma))
 
     def dump(
         self,
