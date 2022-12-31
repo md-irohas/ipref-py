@@ -27,6 +27,10 @@ class GeoIPDB:
 
         self.setup_dbs(**kwargs)
 
+    @property
+    def metadata(self):
+        return {k: v.metadata() if v else None for k, v in self._dbs.items()}
+
     def setup_dbs(self, **kwargs):
         self.clear_dbs()
 

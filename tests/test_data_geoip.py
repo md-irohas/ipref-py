@@ -20,6 +20,12 @@ def geoip_db_setup():
     return GeoIPDB(city="tests/data/GeoIP2-City-Test.mmdb", domain=None)
 
 
+def test_geoipdb_metadata(db):
+    assert db.metadata["city"] is not None
+
+    assert GeoIPDB(city=None).metadata["city"] is None
+
+
 def test_geoipdb_setup_dbs(empty_db):
     empty_db.setup_dbs(city="tests/data/GeoIP2-City-Test.mmdb")
 
