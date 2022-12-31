@@ -12,8 +12,11 @@ def make_config():
 
 
 def test_config__load(config):
-    # not found
+    # not found (silent)
     config._load("not-found")
+
+    # not found (not silent)
+    config._load("not-found", silent=False)
 
     # found
     config._load("tests/etc/test-config.yaml")
