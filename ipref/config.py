@@ -11,7 +11,7 @@ DEFAULT_CONFIG = {
     "dns": {
         "enable_reverse_lookup": False,
         "timeout": 5,
-        "num_workers": 100,
+        "num_workers": 10,
     },
     "geoip": {
         "city": None,
@@ -23,10 +23,35 @@ DEFAULT_CONFIG = {
         "isp": None,
     },
     "columns": [
-        # Meta
+        "meta.raw_input",
         "meta.ip_address",
         "meta.ip_address_types",
     ],
+    "web": {
+        "title": "ipref",
+        "search": [
+            {
+                "name": "Meta",
+                "items": [
+                    {
+                        "label": "Input",
+                        "checked": True,
+                        "data": "meta.raw_input",
+                    },
+                    {
+                        "label": "IP Addr.",
+                        "checked": False,
+                        "data": "meta.ip_address",
+                    },
+                    {
+                        "label": "IP Types",
+                        "checked": True,
+                        "data": "meta.ip_address_types",
+                    },
+                ],
+            },
+        ],
+    },
 }
 
 
@@ -49,9 +74,12 @@ class Config(dict):
     # TODO: 'update' method does not update nested data. Therefore, it is
     # needed to be implemented.
 
-    def _load(self, filename):
+    def _load(self, filename, silent=True):
         if not os.path.exists(filename):
-            log.info("load config: %s (not-found)", filename)
+            if silent:
+                log.info("load config: %s (not-found)", filename)
+            else:
+                log.error("load config: %s (not-found)", filename)
             return
 
         log.info("load config: %s", filename)
@@ -59,10 +87,10 @@ class Config(dict):
             data = yaml.safe_load(f)
             self.update(**data)
 
-    def load(self, filename=None):
+    def load(self, filename=None, silent=False):
         for filepath in self.CONFIG_FILEPATHS:
-            self._load(filepath)
+            self._load(filepath, silent=True)
         if filename:
-            self._load(filename)
+            self._load(filename, silent=silent)
 
         log.info("config: %s", self)
