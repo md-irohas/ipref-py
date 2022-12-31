@@ -6,14 +6,23 @@ import os.path
 from logging.config import dictConfig
 
 import yaml
-from flask import Blueprint, Flask, current_app, flash, g, render_template, request, url_for
+from flask import (
+    Blueprint,
+    Flask,
+    current_app,
+    flash,
+    g,
+    render_template,
+    request,
+    url_for,
+)
 from flask.logging import default_handler
 
 from .__main__ import setup_logger
 from .config import Config
 from .data.geoip import GeoIPDB
 from .lookup import Runner
-from .util import split_data, get_dot_item, unixtime_to_datetime
+from .util import get_dot_item, split_data, unixtime_to_datetime
 
 bp = Blueprint("main", __name__)
 config = Config()
@@ -46,6 +55,7 @@ def create_app(test_config=None):
 # Context Processors
 ############################################################################
 
+
 def get_header_name(s):
     for data in config["web"]["search"]:
         for item in data["items"]:
@@ -65,18 +75,25 @@ def escape_column(s):
 
 @bp.app_context_processor
 def register_context_processor():
-    return dict(get_dot_item=get_dot_item, get_header_name=get_header_name, escape_column=escape_column)
+    return dict(
+        get_dot_item=get_dot_item,
+        get_header_name=get_header_name,
+        escape_column=escape_column,
+    )
 
 
 ############################################################################
 # Routes
 ############################################################################
 
+
 def columns_in_request():
     columns = request.args.get("col", None)
     if columns:
         return columns.split(",")
-    return [key for key, value in request.form.items() if key != "data" and value == "on"]
+    return [
+        key for key, value in request.form.items() if key != "data" and value == "on"
+    ]
 
 
 def data_in_request():
@@ -96,7 +113,13 @@ def get_metadata():
     return data
 
 
-@bp.route("/search", methods=("GET", "POST",))
+@bp.route(
+    "/search",
+    methods=(
+        "GET",
+        "POST",
+    ),
+)
 def search():
     app = current_app
     metadata = get_metadata()
@@ -109,4 +132,6 @@ def search():
         runner = Runner(config)
         results = runner.lookup(data)
 
-    return render_template("search.html", metadata=metadata, columns=columns, results=results)
+    return render_template(
+        "search.html", metadata=metadata, columns=columns, results=results
+    )

@@ -3,8 +3,8 @@
 
 import csv
 import ipaddress
-import logging
 import json
+import logging
 import sys
 from types import SimpleNamespace
 
@@ -69,9 +69,9 @@ class Result:
 
     def to_row(self, columns, escape_comma=False):
         return [
-                escape_csv_column(self[column], escape_comma=escape_comma)
-                for column in columns
-            ]
+            escape_csv_column(self[column], escape_comma=escape_comma)
+            for column in columns
+        ]
 
     def to_dict(self):
         return {
@@ -195,7 +195,9 @@ class Runner:
         if columns is None:
             columns = self.config["columns"]
 
-        writer = csv.writer(fp, dialect="unix", quoting=csv.QUOTE_MINIMAL, delimiter=delimiter)
+        writer = csv.writer(
+            fp, dialect="unix", quoting=csv.QUOTE_MINIMAL, delimiter=delimiter
+        )
         if include_header:
             writer.writerow(columns)
 

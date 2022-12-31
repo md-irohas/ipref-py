@@ -7,7 +7,6 @@ import logging
 from geoip2.database import MODE_MEMORY, Reader
 from geoip2.errors import AddressNotFoundError
 
-
 log = logging.getLogger(__name__)
 
 
