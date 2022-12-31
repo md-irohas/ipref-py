@@ -1,6 +1,6 @@
 # DNS lookups
 dns:
-  enable_reverse_lookup: false
+  enable_reverse_lookup: true
   timeout: 5
   num_workers: 100
 
@@ -17,6 +17,7 @@ geoip:
 # CSV/TSV output columns
 columns:
   # Meta
+  - meta.raw_input
   - meta.ip_address
   - meta.ip_address_types
 
@@ -63,7 +64,7 @@ columns:
   - geoip.isp.autonomous_system_number
   - geoip.isp.autonomous_system_organization
   - geoip.isp.isp
-  - geoip.isp.organization"
+  - geoip.isp.organization
 
   # GeoLite2 ASN
   - geoip.asn.autonomous_system_number
