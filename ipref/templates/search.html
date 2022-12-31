@@ -1,9 +1,107 @@
-{% extends "base.html" %}
+{% set ipref_conf = config["IPREF"] %}
 
-{% block body %}
-<form method="post">
-  <label for="data">IP Addresses</label>
-  <textarea name="data" id="data"></textarea>
-  <input type="submit" value="Search">
-</form>
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
+</head>
+
+<body>
+
+<div class="container">
+<div class="col-8 mx-auto m-3">
+
+  <header class="border-bottom p-3">
+    <span class="fs-1">{{ ipref_conf["title"] or "ipref" }}</span>
+  </header>
+
+  <div class="col-8 mx-auto">
+    <p class="px-2 py-3 text-center">
+      Please input IP addresses separated by spaces, commas, and/or newlines.
+    </p>
+
+    <p class="px-2 py-2 text-end text-muted fst-italic">
+    {% for k, v in metadata.items() %}
+      {{ k }}: {{ v }}<br>
+    {% endfor %}
+    </p>
+  </div>
+
+  <div class="col-8 mx-auto">
+    <form method="post">
+      <textarea name="data" id="data" rows="8" class="form-control">{{ request.form["data"] }}</textarea>
+      <button type="submit" class="btn btn-primary w-100">Search</button>
+
+      <table class="table my-2">
+        <thead>
+          <tr>
+            <th colspan="2" class="text-center">Look-up Items</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for data in ipref_conf["web"]["search"] %}
+            <tr>
+              <th class="text-end">{{ data["name"] }}</td>
+              <td>
+                {% for item in data["items"] %}
+                  {% if item["data"] == "dns.reverse_name" %}
+                    {% set dns_rlookup_disabled = not ipref_conf["dns"]["enable_reverse_lookup"] %}
+                    <input type="checkbox" id="{{ item["data"] }}" name="{{ item["data"] }}"{% if (request.method == "POST" and request.form[item["data"]] == "on") or (request.method == "GET" and item["checked"]) %} checked{% endif %}{% if dns_rlookup_disabled %} disabled{% endif %}>
+                  {# TODO: change font color based on the 'disabled' #}
+                  {{ item["label"] }} {% if dns_rlookup_disabled %}(disabled by admin){% endif %}
+                  {% else %}
+                  <input class="form-check-input" type="checkbox" id="{{ item["data"] }}" name="{{ item["data"] }}"{% if (request.method == "POST" and request.form[item["data"]] == "on") or (request.method == "GET" and item["checked"]) %} checked{% endif %}>
+                  <label class="form-check-label" for="{{ item["data"] }}">{{ item["label"] }}</label>
+                  {% endif %}
+                {% endfor %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </form>
+  </div>
+
+</div>
+</div>
+
+
+{% if results %}
+<div class="container-fluid mx-2 my-5">
+
+<table class="table">
+  <thead>
+  {% for column in columns %}
+    <th class="text-center">{{ get_header_name(column) }}</th>
+  {% endfor %}
+  </thead>
+
+  <tbody>
+  {% for result in results %}
+    <tr>
+    {% for column in columns %}
+      <td class="text-center">{{ escape_column(get_dot_item(result, column)) }}</td>
+    {% endfor %}
+    </tr>
+  {% endfor %}
+  </tbody>
+
+</table>
+
+</div>
+{% endif %}
+
+<div class="container">
+  <div class="col-8 mx-auto m-3">
+
+    <footer class="p-3 border-top text-center text-muted">
+    © 2022, mkt.
+    </footer>
+
+  </div>
+</div>
+
+</body>
+</html>

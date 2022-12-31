@@ -7,7 +7,16 @@ from logging import Formatter, StreamHandler
 from . import __version__
 from .lookup import INPUT_TYPES, OUTPUT_FORMATS, run
 
-LOG_FORMAT = "[%(asctime)s]: %(levelname)s: %(module)s: %(message)s"
+LOG_FORMAT = "[%(asctime)s]: %(levelname)s: %(name)s: %(message)s"
+
+
+def setup_logger(level=logging.INFO):
+    stream_logger = StreamHandler()
+    stream_logger.setLevel(level)
+    stream_logger.setFormatter(Formatter(LOG_FORMAT))
+    logger = logging.getLogger(__name__.split(".")[0])
+    logger.setLevel(level)
+    logger.addHandler(stream_logger)
 
 
 def parse_args():
@@ -27,15 +36,6 @@ def parse_args():
     # fmt: on
 
     return parser.parse_args()
-
-
-def setup_logger():
-    stream_logger = StreamHandler()
-    stream_logger.setLevel(logging.DEBUG)
-    stream_logger.setFormatter(Formatter(LOG_FORMAT))
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(stream_logger)
 
 
 def main():
