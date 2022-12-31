@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
 
+import datetime
 import ipaddress
 from types import SimpleNamespace
 
 import pytest
 
-from ipref.util import get_dot_item, ip_address_types, is_ip_address, split_data
+from ipref.util import get_dot_item, ip_address_types, is_ip_address, split_data, unixtime_to_datetime
 
 
 def test_ip_address():
@@ -53,3 +54,8 @@ def test_get_dot_item():
 
 def test_split_data():
     assert split_data("a  b,c\r\nd\ne") == ["a", "b", "c", "d", "e"]
+
+
+def test_unixtime_to_datetime():
+    assert unixtime_to_datetime(None) is None
+    assert unixtime_to_datetime(0).isoformat() == "1970-01-01T00:00:00+00:00"

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
+import datetime
 import ipaddress
 import re
 
@@ -52,3 +53,12 @@ def split_data(s):
     data = map(lambda x: x.strip(), data)
     data = filter(len, data)
     return list(data)
+
+
+def unixtime_to_datetime(ts, tz=None):
+    if ts is None:
+        return None
+    if tz is None:
+        tz = datetime.timezone.utc
+
+    return datetime.datetime.fromtimestamp(ts, tz=tz)
