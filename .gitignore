@@ -1,4 +1,6 @@
 /env/
 /ipref.egg-info/
+/instance/
+/tests/real-data/
 /.coverage
 /config.yaml
