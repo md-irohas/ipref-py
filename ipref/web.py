@@ -6,6 +6,7 @@ import os.path
 from logging.config import dictConfig
 
 import yaml
+import click
 from flask import (
     Blueprint,
     Flask,
@@ -16,6 +17,7 @@ from flask import (
     request,
     url_for,
 )
+from flask.cli import FlaskGroup
 from flask.logging import default_handler
 
 from .__main__ import setup_logger
@@ -39,7 +41,7 @@ def create_app(test_config=None):
         conf_file = os.getenv("IPREF_CONF")
         if conf_file:
             config.load(conf_file)
-            app.config["IPREF"] = config
+        app.config["IPREF"] = config
     else:
         app.config.from_mapping(test_config)
 
@@ -135,3 +137,8 @@ def search():
     return render_template(
         "search.html", metadata=metadata, columns=columns, results=results
     )
+
+
+@click.group(cls=FlaskGroup, create_app=create_app)
+def run_dev():
+    pass
