@@ -5,8 +5,8 @@ import os
 import os.path
 from logging.config import dictConfig
 
-import yaml
 import click
+import yaml
 from flask import (
     Blueprint,
     Flask,
@@ -34,16 +34,17 @@ log = logging.getLogger(__name__)
 def create_app(test_config=None):
     app = Flask(__name__)
 
-    if app.config["DEBUG"]:
+    if app.config["DEBUG"] or test_config:
         setup_logger()
 
     if test_config is None:
-        conf_file = os.getenv("IPREF_CONF")
+        conf_file = app.config.get("IPREF_CONF")
         if conf_file:
             config.load(conf_file)
         app.config["IPREF"] = config
     else:
         app.config.from_mapping(test_config)
+        app.config["IPREF"] = config
 
     geoip_db = GeoIPDB.instance()
     geoip_db.setup_dbs(**config["geoip"])
@@ -64,7 +65,7 @@ def get_header_name(s):
             if item["data"] == s:
                 return item["label"]
 
-    return s.split(".")[-1]
+    raise ValueError("invalid 'data' value in web.search: %s" % (s))
 
 
 def escape_column(s):
@@ -90,9 +91,6 @@ def register_context_processor():
 
 
 def columns_in_request():
-    columns = request.args.get("col", None)
-    if columns:
-        return columns.split(",")
     return [
         key for key, value in request.form.items() if key != "data" and value == "on"
     ]
@@ -140,5 +138,5 @@ def search():
 
 
 @click.group(cls=FlaskGroup, create_app=create_app)
-def run_dev():
+def run_dev():  # pragma: no cover
     pass

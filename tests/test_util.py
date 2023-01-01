@@ -7,7 +7,13 @@ from types import SimpleNamespace
 
 import pytest
 
-from ipref.util import get_dot_item, ip_address_types, is_ip_address, split_data, unixtime_to_datetime
+from ipref.util import (
+    get_dot_item,
+    ip_address_types,
+    is_ip_address,
+    split_data,
+    unixtime_to_datetime,
+)
 
 
 def test_ip_address():

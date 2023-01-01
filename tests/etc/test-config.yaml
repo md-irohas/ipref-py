@@ -8,7 +8,8 @@ dns:
 geoip:
   city: tests/data/GeoIP2-City-Test.mmdb
   anonymous_ip: tests/data/GeoIP2-Anonymous-IP-Test.mmdb
-  asn: tests/data/GeoLite2-ASN-Test.mmdb
+  # asn: tests/data/GeoLite2-ASN-Test.mmdb
+  asn: null
   connection_type: tests/data/GeoIP2-Connection-Type-Test.mmdb
   domain: tests/data/GeoIP2-Domain-Test.mmdb
   enterprise: tests/data/GeoIP2-Enterprise-Test.mmdb
