@@ -8,7 +8,7 @@ import pytest
 from ipref.config import Config
 from ipref.web import create_app
 
-os.environ["IPREF_CONF"] = "tests/etc/test-config.yaml"
+os.environ["FLASK_IPREF_CONF"] = "tests/etc/test-config.yaml"
 
 
 @pytest.fixture

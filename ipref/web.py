@@ -33,6 +33,7 @@ log = logging.getLogger(__name__)
 
 def create_app(test_config=None):
     app = Flask(__name__)
+    app.config.from_prefixed_env()
 
     if app.config["DEBUG"] or test_config:
         setup_logger()
