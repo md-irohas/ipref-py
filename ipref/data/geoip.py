@@ -58,6 +58,9 @@ class GeoIPDB:
             else:
                 self._dbs[dbname] = None
 
+    def has_db(self, dbname):
+        return dbname in self._dbs
+
     def lookup(self, dbname, addr):
         if dbname not in self._dbs:
             raise ValueError("db not found: %s" % (dbname))

@@ -18,6 +18,7 @@ INPUT_TYPES = {"ip", "file"}
 OUTPUT_FORMATS = {"json", "jsonl", "csv", "tsv"}
 
 log = logging.getLogger(__name__)
+geoip_db = GeoIPDB.instance()
 
 
 def is_valid_input_type(s):
@@ -149,17 +150,22 @@ class Runner:
 
         return True
 
+    def _lookup_geoip_db(self, dbname, ip):
+        if geoip_db.has_db(dbname):
+            return geoip_db.lookup(dbname, ip)
+        else:
+            return None
+
     def _lookup_geoip_dbs(self, results):
-        geoip_db = GeoIPDB.instance()
         for res in results:
             if res.ip:
-                res.geoip.city = geoip_db.lookup("city", res.ip)
-                res.geoip.anonymous_ip = geoip_db.lookup("anonymous_ip", res.ip)
-                res.geoip.asn = geoip_db.lookup("asn", res.ip)
-                res.geoip.connection_type = geoip_db.lookup("connection_type", res.ip)
-                res.geoip.domain = geoip_db.lookup("domain", res.ip)
-                res.geoip.enterprise = geoip_db.lookup("enterprise", res.ip)
-                res.geoip.isp = geoip_db.lookup("isp", res.ip)
+                res.geoip.city = self._lookup_geoip_db("city", res.ip)
+                res.geoip.anonymous_ip = self._lookup_geoip_db("anonymous_ip", res.ip)
+                res.geoip.asn = self._lookup_geoip_db("asn", res.ip)
+                res.geoip.connection_type = self._lookup_geoip_db("connection_type", res.ip)
+                res.geoip.domain = self._lookup_geoip_db("domain", res.ip)
+                res.geoip.enterprise = self._lookup_geoip_db("enterprise", res.ip)
+                res.geoip.isp = self._lookup_geoip_db("isp", res.ip)
 
         return True
 
