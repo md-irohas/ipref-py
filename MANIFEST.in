@@ -1,0 +1,4 @@
+graft ipref/static/
+graft ipref/templates/
+include ipref/config.yaml.orig
+prune tests/
