@@ -14,19 +14,23 @@ DEFAULT_CONFIG = {
         "num_workers": 10,
     },
     "geoip": {
-        "city": None,
-        "anonymous_ip": None,
-        "asn": None,
-        "connection_type": None,
-        "domain": None,
-        "enterprise": None,
-        "isp": None,
+        "dbs": {
+            "city": None,
+            "anonymous_ip": None,
+            "asn": None,
+            "connection_type": None,
+            "domain": None,
+            "enterprise": None,
+            "isp": None,
+        }
     },
-    "columns": [
-        "meta.raw_input",
-        "meta.ip_address",
-        "meta.ip_address_types",
-    ],
+    "output": {
+        "columns": [
+            "meta.raw_input",
+            "meta.ip_address",
+            "meta.ip_address_types",
+        ],
+    },
     "web": {
         "title": "ipref",
         "search": [

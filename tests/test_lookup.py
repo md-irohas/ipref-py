@@ -101,7 +101,7 @@ def test_escape_csv_column():
 @pytest.fixture
 def runner(config):
     db = GeoIPDB.instance()
-    db.setup_dbs(**config["geoip"])
+    db.setup_dbs(**config["geoip"]["dbs"])
 
     yield Runner(config)
 

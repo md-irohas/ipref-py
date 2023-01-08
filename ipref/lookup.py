@@ -193,7 +193,7 @@ class Runner:
         escape_comma=False,
     ):
         if columns is None:
-            columns = self.config["columns"]
+            columns = self.config["output"]["columns"]
 
         writer = csv.writer(
             fp, dialect="unix", quoting=csv.QUOTE_MINIMAL, delimiter=delimiter
@@ -264,7 +264,7 @@ def run(
     config.load(filename=config_file)
 
     geoip_db = GeoIPDB.instance()
-    geoip_db.setup_dbs(**config["geoip"])
+    geoip_db.setup_dbs(**config["geoip"]["dbs"])
 
     data = parse_input_data(input_data, input_type)
     log.info("# of input data: %d", len(data))

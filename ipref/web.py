@@ -48,7 +48,7 @@ def create_app(test_config=None):
         app.config["IPREF"] = config
 
     geoip_db = GeoIPDB.instance()
-    geoip_db.setup_dbs(**config["geoip"])
+    geoip_db.setup_dbs(**config["geoip"]["dbs"])
 
     app.register_blueprint(bp)
 

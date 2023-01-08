@@ -20,7 +20,7 @@ def test_config__load(config):
 
     # found
     config._load("tests/etc/test-config.yaml")
-    assert config["geoip"]["city"] == "tests/data/GeoIP2-City-Test.mmdb"
+    assert config["geoip"]["dbs"]["city"] == "tests/data/GeoIP2-City-Test.mmdb"
 
 
 def test_config_load(config):

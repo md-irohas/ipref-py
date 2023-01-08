@@ -22,3 +22,4 @@ The original data are licensed under 'Creative Commons Attribution-ShareAlike 3.
 >
 > https://github.com/maxmind/MaxMind-DB/blob/main/LICENSE
 
+Thank you, MaxMind's developers!

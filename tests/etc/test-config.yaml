@@ -6,67 +6,69 @@ dns:
 
 # MaxMind's GeoIP databases
 geoip:
-  city: tests/data/GeoIP2-City-Test.mmdb
-  anonymous_ip: tests/data/GeoIP2-Anonymous-IP-Test.mmdb
-  # asn: tests/data/GeoLite2-ASN-Test.mmdb
-  asn: null
-  connection_type: tests/data/GeoIP2-Connection-Type-Test.mmdb
-  domain: tests/data/GeoIP2-Domain-Test.mmdb
-  enterprise: tests/data/GeoIP2-Enterprise-Test.mmdb
-  isp: tests/data/GeoIP2-ISP-Test.mmdb
+  dbs:
+    city: tests/data/GeoIP2-City-Test.mmdb
+    anonymous_ip: tests/data/GeoIP2-Anonymous-IP-Test.mmdb
+    # asn: tests/data/GeoLite2-ASN-Test.mmdb
+    asn: null
+    connection_type: tests/data/GeoIP2-Connection-Type-Test.mmdb
+    domain: tests/data/GeoIP2-Domain-Test.mmdb
+    enterprise: tests/data/GeoIP2-Enterprise-Test.mmdb
+    isp: tests/data/GeoIP2-ISP-Test.mmdb
 
 # CSV/TSV output columns
-columns:
-  # Meta
-  - meta.raw_input
-  - meta.ip_address
-  - meta.ip_address_types
+output:
+  columns:
+    # Meta
+    - meta.raw_input
+    - meta.ip_address
+    - meta.ip_address_types
 
-  # DNS
-  - dns.reverse_name
+    # DNS
+    - dns.reverse_name
 
-  # GeoIP2 Anonymous IP
-  - geoip.anonymous_ip.is_anonymous
-  - geoip.anonymous_ip.is_anonymous_vpn
-  - geoip.anonymous_ip.is_hosting_provider
-  - geoip.anonymous_ip.is_public_proxy
-  - geoip.anonymous_ip.is_residential_proxy
-  - geoip.anonymous_ip.is_tor_exit_node
+    # GeoIP2 Anonymous IP
+    - geoip.anonymous_ip.is_anonymous
+    - geoip.anonymous_ip.is_anonymous_vpn
+    - geoip.anonymous_ip.is_hosting_provider
+    - geoip.anonymous_ip.is_public_proxy
+    - geoip.anonymous_ip.is_residential_proxy
+    - geoip.anonymous_ip.is_tor_exit_node
 
-  # GeoIP2 City / GeoLite2 City
-  - geoip.city.continent.names.en
-  - geoip.city.country.iso_code
-  - geoip.city.country.names.en
-  - geoip.city.city.names.en
-  - geoip.city.location.latitude
-  - geoip.city.location.longitude
+    # GeoIP2 City / GeoLite2 City
+    - geoip.city.continent.names.en
+    - geoip.city.country.iso_code
+    - geoip.city.country.names.en
+    - geoip.city.city.names.en
+    - geoip.city.location.latitude
+    - geoip.city.location.longitude
 
-  # GeoIP2 Connection Type
-  - geoip.connection_type.connection_type
+    # GeoIP2 Connection Type
+    - geoip.connection_type.connection_type
 
-  # GeoIP2 Country / GeoLite2 Country
-  - geoip.country.continent.names.en
-  - geoip.country.country.iso_code
-  - geoip.country.country.names.en
+    # GeoIP2 Country / GeoLite2 Country
+    - geoip.country.continent.names.en
+    - geoip.country.country.iso_code
+    - geoip.country.country.names.en
 
-  # GeoIP2 Domain
-  - geoip.domain.domain
+    # GeoIP2 Domain
+    - geoip.domain.domain
 
-  # GeoIP2 Enterprise
-  - geoip.enterprise.country.confidence
-  - geoip.enterprise.country.iso_code
-  - geoip.enterprise.country.names.en
-  - geoip.enterprise.city.names.en
-  - geoip.enterprise.location.accuracy_radius
-  - geoip.enterprise.location.latitude
-  - geoip.enterprise.location.longitude
+    # GeoIP2 Enterprise
+    - geoip.enterprise.country.confidence
+    - geoip.enterprise.country.iso_code
+    - geoip.enterprise.country.names.en
+    - geoip.enterprise.city.names.en
+    - geoip.enterprise.location.accuracy_radius
+    - geoip.enterprise.location.latitude
+    - geoip.enterprise.location.longitude
 
-  # GeoIP2 ISP
-  - geoip.isp.autonomous_system_number
-  - geoip.isp.autonomous_system_organization
-  - geoip.isp.isp
-  - geoip.isp.organization
+    # GeoIP2 ISP
+    - geoip.isp.autonomous_system_number
+    - geoip.isp.autonomous_system_organization
+    - geoip.isp.isp
+    - geoip.isp.organization
 
-  # GeoLite2 ASN
-  - geoip.asn.autonomous_system_number
-  - geoip.asn.autonomous_system_organization
+    # GeoLite2 ASN
+    - geoip.asn.autonomous_system_number
+    - geoip.asn.autonomous_system_organization
