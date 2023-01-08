@@ -1,24 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import logging
-import os
-import os.path
-from logging.config import dictConfig
 
 import click
-import yaml
-from flask import (
-    Blueprint,
-    Flask,
-    current_app,
-    flash,
-    g,
-    render_template,
-    request,
-    url_for,
-)
+from flask import Blueprint, Flask, render_template, request
 from flask.cli import FlaskGroup
-from flask.logging import default_handler
 
 from .__main__ import setup_logger
 from .config import Config
@@ -37,20 +23,21 @@ def create_app(test_config=None):
 
     if app.config["DEBUG"] or test_config:
         setup_logger()
-
-    if test_config is None:
-        conf_file = app.config.get("IPREF_CONF")
-        if conf_file:
-            config.load(conf_file)
-        app.config["IPREF"] = config
-    else:
+    if test_config is not None:
         app.config.from_mapping(test_config)
-        app.config["IPREF"] = config
+
+    app.config["IPREF"] = config
+
+    config_file = app.config.get("IPREF_CONF")
+    if config_file:
+        config.load(config_file)
+    if not config.is_loaded():
+        app.logger.warning("no config file is loaded. default config is used.")
+
+    app.register_blueprint(bp)
 
     geoip_db = GeoIPDB.instance()
     geoip_db.setup_dbs(**config["geoip"]["dbs"])
-
-    app.register_blueprint(bp)
 
     return app
 
@@ -122,7 +109,6 @@ def get_metadata():
     ),
 )
 def search():
-    app = current_app
     metadata = get_metadata()
     columns = None
     results = None
