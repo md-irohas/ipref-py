@@ -15,19 +15,11 @@ DEFAULT_CONFIG = {
     },
     "geoip": {
         "dbs": {
-            "city": None,
-            "anonymous_ip": None,
-            "asn": None,
-            "connection_type": None,
-            "domain": None,
-            "enterprise": None,
-            "isp": None,
         }
     },
     "output": {
         "columns": [
             "meta.raw_input",
-            "meta.ip_address",
             "meta.ip_address_types",
         ],
     },
@@ -73,6 +65,7 @@ class Config(dict):
 
     def __init__(self):
         super().__init__()
+        self._is_loaded = False
         self.update(**DEFAULT_CONFIG)
 
     # TODO: 'update' method does not update nested data. Therefore, it is
@@ -90,6 +83,11 @@ class Config(dict):
         with open(filename) as f:
             data = yaml.safe_load(f)
             self.update(**data)
+
+        self._is_loaded = True
+
+    def is_loaded(self):
+        return self._is_loaded
 
     def load(self, filename=None, silent=False):
         for filepath in self.CONFIG_FILEPATHS:
