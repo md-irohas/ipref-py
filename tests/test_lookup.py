@@ -23,7 +23,7 @@ from ipref.lookup import (
     run,
 )
 
-from .conftest import TEST_CONFIG
+from .conftest import TEST_IP_LIST, TEST_CONFIG, TEST_CONFIG_FULL
 
 
 def test_is_valid_input_type():
@@ -221,3 +221,10 @@ def test_parse_input_data(capsys, monkeypatch):
 def test_run():
     run(["192.0.2.0", "not-ip"], input_type="ip")
     run([], input_type="ip")
+
+
+def test_run_with_full():
+    run(TEST_IP_LIST, config_file=TEST_CONFIG_FULL, output_format="json")
+    run(TEST_IP_LIST, config_file=TEST_CONFIG_FULL, output_format="jsonl")
+    run(TEST_IP_LIST, config_file=TEST_CONFIG_FULL, output_format="csv", csv_escape_comma=True)
+    run(TEST_IP_LIST, config_file=TEST_CONFIG_FULL, output_format="tsv")
