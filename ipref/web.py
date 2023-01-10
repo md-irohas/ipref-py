@@ -17,10 +17,10 @@ config = Config()
 log = logging.getLogger(__name__)
 
 
-def create_app(test_config=None):
+def create_app(debug=False, test_config=None):
     app = Flask(__name__)
 
-    if app.config["DEBUG"] or test_config:
+    if debug or app.config["DEBUG"]:
         setup_logger()
     if test_config is not None:
         app.config.from_mapping(test_config)
@@ -29,7 +29,7 @@ def create_app(test_config=None):
 
     config.load()
     if not config.is_loaded():
-        app.logger.warning("no config file is loaded. default config is used.")
+        app.logger.warning("no config file is loaded. the default config is used.")
 
     app.register_blueprint(bp)
 
@@ -90,10 +90,7 @@ def get_metadata():
 
     geoip_db = GeoIPDB().instance()
     for k, v in geoip_db.metadata.items():
-        if v is None:
-            data[k] = None
-        else:
-            data[k] = unixtime_to_datetime(v.build_epoch).isoformat()
+        data[k] = unixtime_to_datetime(v.build_epoch).isoformat()
 
     return data
 
