@@ -19,7 +19,6 @@ log = logging.getLogger(__name__)
 
 def create_app(test_config=None):
     app = Flask(__name__)
-    app.config.from_prefixed_env()
 
     if app.config["DEBUG"] or test_config:
         setup_logger()
@@ -28,9 +27,7 @@ def create_app(test_config=None):
 
     app.config["IPREF"] = config
 
-    config_file = app.config.get("IPREF_CONF")
-    if config_file:
-        config.load(config_file)
+    config.load()
     if not config.is_loaded():
         app.logger.warning("no config file is loaded. default config is used.")
 

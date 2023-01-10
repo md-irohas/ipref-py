@@ -9,9 +9,11 @@ import yaml
 # See config.yaml.orig for the full documentation.
 DEFAULT_CONFIG = {
     "dns": {
-        "enable_reverse_lookup": False,
-        "timeout": 5,
-        "num_workers": 10,
+        "reverse_name": {
+            "enabled": False,
+            "timeout": 5,
+            "num_workers": 10,
+        }
     },
     "geoip": {
         "dbs": {
@@ -62,14 +64,12 @@ class Config(dict):
         "~/.ipref.yaml",
         "~/.ipref.yml",
     ]
+    CONFIG_VARNAME = "IPREF_CONF"
 
     def __init__(self):
         super().__init__()
         self._is_loaded = False
         self.update(**DEFAULT_CONFIG)
-
-    # TODO: 'update' method does not update nested data. Therefore, it is
-    # needed to be implemented.
 
     def _load(self, filename, silent=True):
         if not os.path.exists(filename):
@@ -92,6 +92,14 @@ class Config(dict):
     def load(self, filename=None, silent=False):
         for filepath in self.CONFIG_FILEPATHS:
             self._load(filepath, silent=True)
+
+        env_filename = os.environ.get(self.CONFIG_VARNAME, None)
+        if env_filename:
+            log.info("env '%s' found: %s", self.CONFIG_VARNAME, env_filename)
+            self._load(env_filename, silent=False)
+        else:
+            log.info("env '%s' not found.", self.CONFIG_VARNAME)
+
         if filename:
             self._load(filename, silent=silent)
 

@@ -127,7 +127,7 @@ class Runner:
 
     def _lookup_dns(self, results):
         dns_config = self.config["dns"]
-        if not dns_config["enable_reverse_lookup"]:
+        if not dns_config["reverse_name"]["enabled"]:
             return False
 
         ips = [str(result.ip) for result in results]
@@ -136,8 +136,8 @@ class Runner:
 
         hostnames = dns_reverse_lookups(
             uniq_ips,
-            timeout=dns_config["timeout"],
-            num_workers=dns_config["num_workers"],
+            timeout=dns_config["reverse_name"]["timeout"],
+            num_workers=dns_config["reverse_name"]["num_workers"],
         )
 
         for result in results:

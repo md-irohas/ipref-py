@@ -123,10 +123,10 @@ def test_runner__init_results(runner, ips):
 
 
 def test_runner__lookup_dns(runner, results):
-    runner.config["dns"]["enable_reverse_lookup"] = False
+    runner.config["dns"]["reverse_name"]["enabled"] = False
     assert runner._lookup_dns(results) is False
 
-    runner.config["dns"]["enable_reverse_lookup"] = True
+    runner.config["dns"]["reverse_name"]["enabled"] = True
     assert runner._lookup_dns(results) is True
 
 

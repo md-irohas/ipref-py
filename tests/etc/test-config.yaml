@@ -1,8 +1,9 @@
 # DNS lookups
 dns:
-  enable_reverse_lookup: true
-  timeout: 5
-  num_workers: 100
+  reverse_name:
+    enabled: true
+    timeout: 5
+    num_workers: 100
 
 # MaxMind's GeoIP databases
 geoip:
