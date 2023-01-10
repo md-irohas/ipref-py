@@ -175,13 +175,13 @@ web:
           checked: false
           data: geoip.city.continent.names.en
         - label: Country Code
-          checked: false
+          checked: true
           data: geoip.city.country.iso_code
         - label: Country
           checked: true
           data: geoip.city.country.names.en
         - label: City
-          checked: false
+          checked: true
           data: geoip.city.city.names.en
         - label: Postal Code
           checked: false
