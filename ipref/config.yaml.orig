@@ -1,52 +1,76 @@
-# 'ipref' configuration template file.
+############################################################################
+# 'ipref' and 'ipref-web' configuration template
 #
-# This configuration file is used for both ipref and ipref-web.
+#   This file is a configuration template which is used for both ipref and
+#   ipref-web. Read and follow comments below.
+#
+#   - URL: https://github.com/md-irohas/ipref-py
+#   - Revision: 1
+#
+############################################################################
 
 ############################################################################
 # DNS lookups [CLI/Web]
 #
-# Configuration of DNS look-ups.
+#   This section includes configurations for DNS look-ups.
+#
 ############################################################################
 dns:
-  # Flag to enable reverse lookups. If enabled, lookups may take some time to
-  # finish because DNS look-ups are slow.
-  enable_reverse_lookup: false
-  # DNS lookup timeout (per lookup) in second.
-  timeout: 5
-  # Number of workers which look up DNS reverse names.
-  num_workers: 10
+  # Configuration for reverse name look-ups (DNS queries with PTR records)
+  reverse_name:
+    # Flag to enable reverse look-ups. Note that if enabled look-ups may take
+    # some time to finish because DNS look-ups are slow.
+    enabled: false
+    # DNS lookup timeout (per lookup) in second.
+    timeout: 5
+    # Number of workers which look up DNS reverse names.
+    num_workers: 10
 
 ############################################################################
 # MaxMind's GeoIP databases [CLI/Web]
 # 
-# Paths to GeoIP databases. The following default values use test GeoIP
-# databases provided by MaxMind. If you do not use part of these databases,
-# comment out the paths (like 'country' below)
+#   This section includes configurations for MaxMind's GeoIP databases.
+#
 ############################################################################
 geoip:
+  # Paths to MaxMind's GeoIP downloadable databases (.mmdb files).
+  # If you do not use the part of these databases, comment out the paths (like
+  # 'country', 'anonymous_ip', 'asn' below)
   dbs:
     # [GeoIP2/GeoLite] Path to country database
     # country: null
+
     # [GeoIP2/GeoLite] Path to city database
     city: tests/data/GeoIP2-City-Test.mmdb
+
     # [GeoIP2] Path to anonymous IP database
     # anonymous_ip: tests/data/GeoIP2-Anonymous-IP-Test.mmdb
-    # [GeoLite] Path to ASN database
-    # asn: tests/data/GeoLite2-ASN-Test.mmdb
+
     # [GeoIP2] Path to connection type database
     connection_type: tests/data/GeoIP2-Connection-Type-Test.mmdb
+
     # [GeoIP2] Path to domain database
     domain: tests/data/GeoIP2-Domain-Test.mmdb
+
     # [GeoIP2] Path to enterprise database
     # enterprise: tests/data/GeoIP2-Enterprise-Test.mmdb
+
     # [GeoIP2] Path to ISP database
     isp: tests/data/GeoIP2-ISP-Test.mmdb
 
+    # [GeoLite] Path to ASN database
+    # asn: tests/data/GeoLite2-ASN-Test.mmdb
+
 ############################################################################
 # Output [CLI]
+#
+#   This section includes configurations for output.
+#
 ############################################################################
 output:
-  # List of columns 
+  # [csv/tsv] List of output columns.
+  # To add a column, uncomment the following lines. To remove a column, comment
+  # out the following lines.
   columns:
     # Meta
     - meta.raw_input
@@ -77,10 +101,6 @@ output:
     # - geoip.anonymous_ip.is_tor_exit_node
     # - geoip.anonymous_ip.is_residential_proxy
 
-    # GeoLite ASN
-    # - geoip.asn.autonomous_system_number
-    # - geoip.asn.autonomous_system_organization
-
     # GeoIP2 Connection Type
     - geoip.connection_type.connection_type
 
@@ -102,11 +122,22 @@ output:
     - geoip.isp.mobile_country_code
     - geoip.isp.mobile_network_code
 
+    # GeoLite ASN
+    # - geoip.asn.autonomous_system_number
+    # - geoip.asn.autonomous_system_organization
+
+
 ############################################################################
 # Web
+#
+#   This section includes configuraitons for the web interface.
+#
 ############################################################################
 web:
+  # Web title.
   title: ipref
+
+  # Configuration for search box.
   search:
     - name: Meta
       items:
@@ -126,17 +157,32 @@ web:
           checked: false
           data: dns.reverse_name
 
-    - name: Country/City
+    # - name: Country
+    #   items:
+    #     - label: Continent
+    #       checked: false
+    #       data: geoip.country.continent.names.en
+    #     - label: Country Code
+    #       checked: true
+    #       data: geoip.country.country.iso_code
+    #     - label: Country
+    #       checked: true
+    #       data: geoip.country.country.namees.en
+
+    - name: City
       items:
+        - label: Continent
+          checked: false
+          data: geoip.city.continent.names.en
         - label: Country Code
           checked: false
           data: geoip.city.country.iso_code
         - label: Country
           checked: true
-          data: geoip.city.country.name
+          data: geoip.city.country.names.en
         - label: City
           checked: false
-          data: geoip.city.city.name
+          data: geoip.city.city.names.en
         - label: Postal Code
           checked: false
           data: geoip.city.postal.code
@@ -167,16 +213,7 @@ web:
     #   - label: Tor Exit Node
     #     checked: false
     #     data: geoip.anonymous_ip.is_tor_exit_node
-    # 
-    # - name: ASN
-    #   items:
-    #   - label: AS Number
-    #     checked: true
-    #     data: geoip.asn.autonomous_system_number
-    #   - label: AS Org.
-    #     checked: true
-    #     data: geoip.isp.autonomous_system_organization
-    #
+
     - name: Connection Type
       items:
       - label: Connection Type
@@ -209,7 +246,7 @@ web:
     #   - label: Longitude
     #     checked: false
     #     data: geoip.enterprise.location.longitude
-    # 
+
     - name: ISP
       items:
       - label: AS Number
@@ -224,3 +261,12 @@ web:
       - label: Org.
         checked: false
         data: geoip.isp.organization
+
+    # - name: ASN
+    #   items:
+    #   - label: AS Number
+    #     checked: true
+    #     data: geoip.asn.autonomous_system_number
+    #   - label: AS Org.
+    #     checked: true
+    #     data: geoip.isp.autonomous_system_organization
