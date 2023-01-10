@@ -36,6 +36,31 @@ def _get_geoip_raw_data(record):
         return None
 
 
+def escape_csv_column(col, escape_comma=False):
+    if isinstance(col, set) or isinstance(col, list):
+        col = " ".join(col)
+
+    if escape_comma:
+        if isinstance(col, str):
+            col = col.replace(",", "<comma>")
+
+    return col
+
+
+class ResultJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Result):
+            return obj.to_dict()
+        if isinstance(obj, set):
+            return list(obj)
+        if isinstance(obj, ipaddress.IPv4Address):
+            return str(obj)
+        if isinstance(obj, ipaddress.IPv6Address):
+            return str(obj)
+        # NOTE: This will raise TypeError.
+        return json.JSONEncoder.default(self, obj)
+
+
 class Result:
     def __init__(self, raw_input):
         # Meta data
@@ -78,6 +103,7 @@ class Result:
         return {
             "meta": {
                 "version": __name__.split(".")[0] + "-" + __version__,
+                "raw_input": self.meta.raw_input,
                 "ip_address": self.meta.ip_address,
                 "ip_address_types": self.meta.ip_address_types,
             },
@@ -93,29 +119,11 @@ class Result:
         }
 
 
-class ResultJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Result):
-            return obj.to_dict()
-        if isinstance(obj, set):
-            return list(obj)
-        if isinstance(obj, ipaddress.IPv4Address):
-            return str(obj)
-        if isinstance(obj, ipaddress.IPv6Address):
-            return str(obj)
-        # NOTE: This will raise TypeError.
-        return json.JSONEncoder.default(self, obj)
-
-
-def escape_csv_column(col, escape_comma=False):
-    if isinstance(col, set) or isinstance(col, list):
-        col = " ".join(col)
-
-    if escape_comma:
-        if isinstance(col, str):
-            col = col.replace(",", "<comma>")
-
-    return col
+def _lookup_geoip_db(dbname, ip):
+    if geoip_db.has_db(dbname):
+        return geoip_db.lookup(dbname, ip)
+    else:
+        return None
 
 
 class Runner:
@@ -150,22 +158,16 @@ class Runner:
 
         return True
 
-    def _lookup_geoip_db(self, dbname, ip):
-        if geoip_db.has_db(dbname):
-            return geoip_db.lookup(dbname, ip)
-        else:
-            return None
-
     def _lookup_geoip_dbs(self, results):
         for res in results:
             if res.ip:
-                res.geoip.city = self._lookup_geoip_db("city", res.ip)
-                res.geoip.anonymous_ip = self._lookup_geoip_db("anonymous_ip", res.ip)
-                res.geoip.asn = self._lookup_geoip_db("asn", res.ip)
-                res.geoip.connection_type = self._lookup_geoip_db("connection_type", res.ip)
-                res.geoip.domain = self._lookup_geoip_db("domain", res.ip)
-                res.geoip.enterprise = self._lookup_geoip_db("enterprise", res.ip)
-                res.geoip.isp = self._lookup_geoip_db("isp", res.ip)
+                res.geoip.city = _lookup_geoip_db("city", res.ip)
+                res.geoip.anonymous_ip = _lookup_geoip_db("anonymous_ip", res.ip)
+                res.geoip.asn = _lookup_geoip_db("asn", res.ip)
+                res.geoip.connection_type = _lookup_geoip_db("connection_type", res.ip)
+                res.geoip.domain = _lookup_geoip_db("domain", res.ip)
+                res.geoip.enterprise = _lookup_geoip_db("enterprise", res.ip)
+                res.geoip.isp = _lookup_geoip_db("isp", res.ip)
 
         return True
 

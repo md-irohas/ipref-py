@@ -14,6 +14,7 @@ from ipref.lookup import (
     ResultJSONEncoder,
     Runner,
     _get_geoip_raw_data,
+    _lookup_geoip_db,
     escape_csv_column,
     is_valid_input_type,
     is_valid_output_format,
@@ -44,8 +45,24 @@ def test__get_geoip_raw_data():
     assert _get_geoip_raw_data(db.lookup("city", "192.0.2.0")) is None
 
 
+def test_escape_csv_column():
+    assert escape_csv_column(["a", "b"]) == "a b"
+    assert escape_csv_column(0) == 0
+    assert escape_csv_column("a,b,c") == "a,b,c"
+    assert escape_csv_column("a,b,c", escape_comma=True) == "a<comma>b<comma>c"
+
+
+def test_result_json_encoder(result_ip4, result_ip6, result_not_ip):
+    assert json.dumps(result_ip4, cls=ResultJSONEncoder) is not None
+    assert json.dumps(result_ip6, cls=ResultJSONEncoder) is not None
+    assert json.dumps(result_not_ip, cls=ResultJSONEncoder) is not None
+
+    with pytest.raises(TypeError):
+        json.dumps(object(), cls=ResultJSONEncoder)
+
+
 @pytest.fixture
-def result_ip():
+def result_ip4():
     return Result("192.0.2.0")
 
 
@@ -59,43 +76,52 @@ def result_not_ip():
     return Result("not-ip")
 
 
-def test_result__init__(result_ip, result_ip6, result_not_ip):
-    assert result_ip.meta.ip_address_types == {"private"}
+def test_result__init__(result_ip4, result_ip6, result_not_ip):
+    assert result_ip4.meta.ip_address_types == {"private"}
     assert result_ip6.meta.ip_address_types == {"private"}
     assert result_not_ip.meta.ip_address_types == {"error"}
 
 
-def test_result_ip(result_ip, result_ip6, result_not_ip):
-    assert result_ip.ip is not None
+def test_result_ip(result_ip4, result_ip6, result_not_ip):
+    assert result_ip4.ip is not None
     assert result_ip6.ip is not None
     assert result_not_ip.ip is None
 
 
-def test_result__getitem__(result_ip):
-    assert result_ip["meta.ip_address"] == result_ip.meta.ip_address
+def test_result__getitem__(result_ip4):
+    assert result_ip4["meta.ip_address"] == result_ip4.meta.ip_address
 
 
-def test_result_to_dict(result_ip, result_ip6, result_not_ip):
-    # TODO: The dict data need to be checked.
-    result_ip.to_dict()
-    result_ip6.to_dict()
-    result_not_ip.to_dict()
+def test_result_to_row(result_ip4, result_ip6, result_not_ip):
+    columns = ["meta.raw_input", "meta.ip_address"]
+    assert result_ip4.to_row(columns) == [
+        result_ip4.meta.raw_input,
+        result_ip4.meta.ip_address,
+    ]
+    assert result_ip6.to_row(columns) == [
+        result_ip6.meta.raw_input,
+        result_ip6.meta.ip_address,
+    ]
+    assert result_not_ip.to_row(columns) == [
+        result_not_ip.meta.raw_input,
+        result_not_ip.meta.ip_address,
+    ]
+
+    # To check escape_comma argument, use raw_input column.
+    comma_result = Result("comma , include")
+    assert comma_result.to_row(columns, escape_comma=True) == [
+        "comma <comma> include",
+        comma_result.meta.ip_address,
+    ]
 
 
-def test_result_json_encoder(result_ip, result_ip6, result_not_ip):
-    assert json.dumps(result_ip, cls=ResultJSONEncoder) is not None
-    assert json.dumps(result_ip6, cls=ResultJSONEncoder) is not None
-    assert json.dumps(result_not_ip, cls=ResultJSONEncoder) is not None
-
-    with pytest.raises(TypeError):
-        json.dumps(object(), cls=ResultJSONEncoder)
-
-
-def test_escape_csv_column():
-    assert escape_csv_column(["a", "b"]) == "a b"
-    assert escape_csv_column(0) == 0
-    assert escape_csv_column("a,b,c") == "a,b,c"
-    assert escape_csv_column("a,b,c", escape_comma=True) == "a<comma>b<comma>c"
+def test_result_to_dict(result_ip4, result_ip6, result_not_ip):
+    assert result_ip4.to_dict()["meta"]["raw_input"] == result_ip4.meta.raw_input
+    assert result_ip6.to_dict()["meta"]["ip_address"] == result_ip6.meta.ip_address
+    assert (
+        result_not_ip.to_dict()["meta"]["ip_address_types"]
+        == result_not_ip.meta.ip_address_types
+    )
 
 
 @pytest.fixture
@@ -111,6 +137,11 @@ def runner(config):
 @pytest.fixture
 def ips():
     return ["192.0.2.0", "not-ip"]
+
+
+def test__lookup_geoip_db(runner):
+    assert _lookup_geoip_db("city", "2001:218::") is not None
+    assert _lookup_geoip_db("not-dbname", "2001:218::") is None
 
 
 @pytest.fixture
