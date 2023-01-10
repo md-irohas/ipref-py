@@ -29,10 +29,10 @@ def parse_args():
     parser.add_argument("-c", "--config", default=None, help="path to config file.")
     parser.add_argument("-I", "--input-type", default="ip", choices=INPUT_TYPES, help="input type.")
     parser.add_argument("-O", "--output-format", default="json", choices=OUTPUT_FORMATS, help="output format.")
-    parser.add_argument("--csv-columns", default=None, help="[csv] CSV columns separated by comma (,).")
-    parser.add_argument("--csv-exclude-header", action="store_true", help="[csv] exclude a csv header.")
-    parser.add_argument("--csv-escape-comma", action="store_true", help="[csv] escape commas (,) to <comma> (useful when using commands such as 'cut').")
-    parser.add_argument("items", type=str, nargs="*", help="IP addresses or filenames. if input_type is file and the items are empty, stdin is used.")
+    parser.add_argument("--csv-columns", default=None, help="[csv|tsv] output columns separated by comma (,).")
+    parser.add_argument("--csv-exclude-header", action="store_true", help="[csv|tsv] exclude a csv header.")
+    parser.add_argument("--csv-escape-comma", action="store_true", help="[csv|tsv] replace commas (,) to <comma> (useful when using commands such as 'cut').")  # noqa: E501
+    parser.add_argument("items", type=str, nargs="*", help="IP addresses or filenames. if input_type is file and the items are empty, stdin is used.")  # noqa: E501
     # fmt: on
 
     return parser.parse_args()
@@ -44,12 +44,17 @@ def main():
     if args.debug:
         setup_logger()
 
+    if args.csv_columns:
+        csv_columns = args.csv_columns.split(",")
+    else:
+        csv_columns = None
+
     run(
         args.items,
         config_file=args.config,
         input_type=args.input_type,
         output_format=args.output_format,
-        csv_columns=args.csv_columns,
+        csv_columns=csv_columns,
         csv_include_header=not args.csv_exclude_header,
         csv_escape_comma=args.csv_escape_comma,
     )

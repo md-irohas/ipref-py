@@ -284,6 +284,7 @@ def run(
     r.dump(
         results,
         output_format=output_format,
+        csv_columns=csv_columns,
         csv_include_header=csv_include_header,
         csv_escape_comma=csv_escape_comma,
     )
