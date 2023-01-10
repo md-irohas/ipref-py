@@ -47,7 +47,7 @@
               <td>
                 {% for item in data["items"] %}
                   {% if item["data"] == "dns.reverse_name" %}
-                    {% set dns_rlookup_disabled = not ipref_conf["dns"]["enable_reverse_lookup"] %}
+                    {% set dns_rlookup_disabled = not ipref_conf["dns"]["reverse_name"]["enabled"] %}
                     <input type="checkbox" id="{{ item["data"] }}" name="{{ item["data"] }}"{% if (request.method == "POST" and request.form[item["data"]] == "on") or (request.method == "GET" and item["checked"]) %} checked{% endif %}{% if dns_rlookup_disabled %} disabled{% endif %}>
                   {# TODO: change font color based on the 'disabled' #}
                   {{ item["label"] }} {% if dns_rlookup_disabled %}(disabled by admin){% endif %}
