@@ -167,7 +167,7 @@ web:
           data: geoip.country.country.iso_code
         - label: Country
           checked: true
-          data: geoip.country.country.namees.en
+          data: geoip.country.country.names.en
 
     - name: City
       items:
@@ -269,4 +269,4 @@ web:
         data: geoip.asn.autonomous_system_number
       - label: AS Org.
         checked: true
-        data: geoip.isp.autonomous_system_organization
+        data: geoip.asn.autonomous_system_organization
