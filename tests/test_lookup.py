@@ -6,6 +6,7 @@ import json
 
 import pytest
 
+from ipref.config import Config
 from ipref.data.geoip import GeoIPDB
 from ipref.lookup import (
     INPUT_TYPES,
@@ -21,6 +22,8 @@ from ipref.lookup import (
     parse_input_data,
     run,
 )
+
+from .conftest import TEST_CONFIG
 
 
 def test_is_valid_input_type():
@@ -122,6 +125,13 @@ def test_result_to_dict(result_ip4, result_ip6, result_not_ip):
         result_not_ip.to_dict()["meta"]["ip_address_types"]
         == result_not_ip.meta.ip_address_types
     )
+
+
+@pytest.fixture
+def config():
+    conf = Config()
+    conf.load(TEST_CONFIG)
+    return conf
 
 
 @pytest.fixture

@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-import os
-
 import pytest
 
 from ipref.web import create_app, escape_column, get_header_name
@@ -10,6 +8,7 @@ from ipref.web import create_app, escape_column, get_header_name
 
 def test_create_app():
     create_app()
+    create_app(debug=True)
 
 
 def test_get_header_name(app):

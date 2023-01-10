@@ -7,6 +7,8 @@ import pytest
 
 from ipref.config import Config
 
+from .conftest import TEST_CONFIG
+
 
 @pytest.fixture(name="config")
 def make_config():
@@ -21,14 +23,14 @@ def test_config__load(config):
     config._load("not-found", silent=False)
 
     # found
-    config._load("tests/etc/config.yaml")
+    config._load(TEST_CONFIG)
     assert "output" in config
 
 
 def test_config_is_loaded(config):
     assert config.is_loaded() is False
 
-    config._load("tests/etc/config.yaml")
+    config._load(TEST_CONFIG)
 
     assert config.is_loaded() is True
 
@@ -38,9 +40,9 @@ def test_config_load(config):
     config.load()
 
     # with ENV
-    os.environ[config.CONFIG_VARNAME] = "tests/etc/config.yaml"
+    os.environ[config.CONFIG_VARNAME] = TEST_CONFIG
     config.load()
     del os.environ[config.CONFIG_VARNAME]
 
     # with filename
-    config.load("tests/etc/config.yaml")
+    config.load(TEST_CONFIG)
