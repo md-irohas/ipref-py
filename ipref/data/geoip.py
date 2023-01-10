@@ -34,14 +34,16 @@ class GeoIPDB:
         self.clear_dbs()
 
         for dbname, dbpath in kwargs.items():
+            if dbpath is None:
+                log.warning("'%s' includes empty path. skipped.", dbname)
+                continue
             self._dbpaths[dbname] = dbpath
 
         self.reload_dbs()
 
     def _close_dbs(self):
-        for dbname, db in self._dbs.items():
-            if db is not None:
-                db.close()
+        for db in self._dbs.values():
+            db.close()
 
     def clear_dbs(self):
         self._close_dbs()
@@ -53,22 +55,16 @@ class GeoIPDB:
 
         for dbname, dbpath in self._dbpaths.items():
             log.info("load GeoIP2 database: %s: %s", dbname, dbpath)
-            if dbpath:
-                self._dbs[dbname] = Reader(dbpath, mode=MODE_MEMORY)
-            else:
-                self._dbs[dbname] = None
+            self._dbs[dbname] = Reader(dbpath, mode=MODE_MEMORY)
 
     def has_db(self, dbname):
         return dbname in self._dbs
 
     def lookup(self, dbname, addr):
-        if dbname not in self._dbs:
+        if not self.has_db(dbname):
             raise ValueError("db not found: %s" % (dbname))
 
         db = self._dbs[dbname]
-        if db is None:
-            return None
-
         try:
             return getattr(db, dbname)(addr)
         except AddressNotFoundError:

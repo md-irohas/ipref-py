@@ -23,11 +23,12 @@ def geoip_db_setup():
 def test_geoipdb_metadata(db):
     assert db.metadata["city"] is not None
 
-    assert GeoIPDB(city=None).metadata["city"] is None
-
 
 def test_geoipdb_setup_dbs(empty_db):
     empty_db.setup_dbs(city="tests/data/GeoIP2-City-Test.mmdb")
+
+    with pytest.raises(OSError):
+        empty_db.setup_dbs(city="not-found")
 
 
 def test_geoipdb__close_dbs(db):
@@ -43,9 +44,8 @@ def test_geoipdb_reload_dbs(db):
 
 
 def test_geoipdb_lookup(db):
-    with pytest.raises(ValueError):
-        db.lookup("not-dbname", "192.0.2.0")
-
-    assert db.lookup("domain", "192.0.2.0") is None
     assert db.lookup("city", "2001:218::") is not None
     assert db.lookup("city", "192.0.2.0") is None
+
+    with pytest.raises(ValueError):
+        db.lookup("not-dbname", "192.0.2.0")
