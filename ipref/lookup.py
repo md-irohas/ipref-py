@@ -79,6 +79,7 @@ class Result:
         # GeoIP
         self.geoip = SimpleNamespace()
         self.geoip.city = None
+        self.geoip.country = None
         self.geoip.anonymous_ip = None
         self.geoip.asn = None
         self.geoip.connection_type = None
@@ -109,6 +110,7 @@ class Result:
             },
             "geoip": {
                 "city": _get_geoip_raw_data(self.geoip.city),
+                "country": _get_geoip_raw_data(self.geoip.country),
                 "anonymous_ip": _get_geoip_raw_data(self.geoip.anonymous_ip),
                 "asn": _get_geoip_raw_data(self.geoip.asn),
                 "connection_type": _get_geoip_raw_data(self.geoip.connection_type),
@@ -162,6 +164,7 @@ class Runner:
         for res in results:
             if res.ip:
                 res.geoip.city = _lookup_geoip_db("city", res.ip)
+                res.geoip.country = _lookup_geoip_db("country", res.ip)
                 res.geoip.anonymous_ip = _lookup_geoip_db("anonymous_ip", res.ip)
                 res.geoip.asn = _lookup_geoip_db("asn", res.ip)
                 res.geoip.connection_type = _lookup_geoip_db("connection_type", res.ip)
