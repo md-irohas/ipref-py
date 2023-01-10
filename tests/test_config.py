@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
+import os
+
 import pytest
 
 from ipref.config import Config
@@ -19,13 +21,26 @@ def test_config__load(config):
     config._load("not-found", silent=False)
 
     # found
-    config._load("tests/etc/test-config.yaml")
-    assert config["geoip"]["dbs"]["city"] == "tests/data/GeoIP2-City-Test.mmdb"
+    config._load("tests/etc/config.yaml")
+    assert "output" in config
+
+
+def test_config_is_loaded(config):
+    assert config.is_loaded() is False
+
+    config._load("tests/etc/config.yaml")
+
+    assert config.is_loaded() is True
 
 
 def test_config_load(config):
-    # without filename
+    # without filename / env
     config.load()
 
+    # with ENV
+    os.environ[config.CONFIG_VARNAME] = "tests/etc/config.yaml"
+    config.load()
+    del os.environ[config.CONFIG_VARNAME]
+
     # with filename
-    config.load("tests/etc/test-config.yaml")
+    config.load("tests/etc/config.yaml")
