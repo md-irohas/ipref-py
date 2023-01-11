@@ -1,5 +1,5 @@
 ############################################################################
-# 'ipref' and 'ipref-web' configuration template
+# 'ipref' and 'ipref-web' configuration template for GeoLite
 #
 #   This file is a configuration template which is used for both ipref and
 #   ipref-web. Read and follow comments below.
@@ -41,25 +41,25 @@ geoip:
     # country: null
 
     # [GeoIP2/GeoLite] Path to city database
-    city: tests/data/GeoIP2-City-Test.mmdb
+    city: tests/data/GeoLite2-City.mmdb
 
     # [GeoIP2] Path to anonymous IP database
     # anonymous_ip: tests/data/GeoIP2-Anonymous-IP-Test.mmdb
 
     # [GeoIP2] Path to connection type database
-    connection_type: tests/data/GeoIP2-Connection-Type-Test.mmdb
+    # connection_type: tests/data/GeoIP2-Connection-Type-Test.mmdb
 
     # [GeoIP2] Path to domain database
-    domain: tests/data/GeoIP2-Domain-Test.mmdb
+    # domain: tests/data/GeoIP2-Domain-Test.mmdb
 
     # [GeoIP2] Path to enterprise database
     # enterprise: tests/data/GeoIP2-Enterprise-Test.mmdb
 
     # [GeoIP2] Path to ISP database
-    isp: tests/data/GeoIP2-ISP-Test.mmdb
+    # isp: tests/data/GeoIP2-ISP-Test.mmdb
 
     # [GeoLite] Path to ASN database
-    # asn: tests/data/GeoLite2-ASN-Test.mmdb
+    asn: tests/data/GeoLite2-ASN.mmdb
 
 ############################################################################
 # Output [CLI]
@@ -103,10 +103,10 @@ output:
     # - geoip.anonymous_ip.is_residential_proxy
 
     # GeoIP2 Connection Type
-    - geoip.connection_type.connection_type
+    # - geoip.connection_type.connection_type
 
     # GeoIP2 Domain
-    - geoip.domain.domain
+    # - geoip.domain.domain
 
     # GeoIP2 Enterprise
     # - geoip.enterprise.country.iso_code
@@ -116,16 +116,16 @@ output:
     # - geoip.enterprise.location.longitude
 
     # GeoIP2 ISP
-    - geoip.isp.autonomous_system_number
-    - geoip.isp.autonomous_system_organization
-    - geoip.isp.isp
-    - geoip.isp.organization
-    - geoip.isp.mobile_country_code
-    - geoip.isp.mobile_network_code
+    # - geoip.isp.autonomous_system_number
+    # - geoip.isp.autonomous_system_organization
+    # - geoip.isp.isp
+    # - geoip.isp.organization
+    # - geoip.isp.mobile_country_code
+    # - geoip.isp.mobile_network_code
 
     # GeoLite ASN
-    # - geoip.asn.autonomous_system_number
-    # - geoip.asn.autonomous_system_organization
+    - geoip.asn.autonomous_system_number
+    - geoip.asn.autonomous_system_organization
 
 
 ############################################################################
@@ -215,17 +215,17 @@ web:
     #     checked: false
     #     data: geoip.anonymous_ip.is_tor_exit_node
 
-    - name: Connection Type
-      items:
-      - label: Connection Type
-        checked: true
-        data: geoip.connection_type.connection_type
+    # - name: Connection Type
+    #   items:
+    #   - label: Connection Type
+    #     checked: true
+    #     data: geoip.connection_type.connection_type
 
-    - name: Domain
-      items:
-      - label: Domain
-        checked: true
-        data: geoip.domain.domain
+    # - name: Domain
+    #   items:
+    #   - label: Domain
+    #     checked: true
+    #     data: geoip.domain.domain
 
     # - name: Enterprise
     #   items:
@@ -248,26 +248,26 @@ web:
     #     checked: false
     #     data: geoip.enterprise.location.longitude
 
-    - name: ISP
-      items:
-      - label: AS Number
-        checked: true
-        data: geoip.isp.autonomous_system_number
-      - label: AS Org.
-        checked: true
-        data: geoip.isp.autonomous_system_organization
-      - label: ISP
-        checked: true
-        data: geoip.isp.isp
-      - label: Org.
-        checked: false
-        data: geoip.isp.organization
-
-    # - name: ASN
+    # - name: ISP
     #   items:
     #   - label: AS Number
     #     checked: true
-    #     data: geoip.asn.autonomous_system_number
+    #     data: geoip.isp.autonomous_system_number
     #   - label: AS Org.
     #     checked: true
-    #     data: geoip.asn.autonomous_system_organization
+    #     data: geoip.isp.autonomous_system_organization
+    #   - label: ISP
+    #     checked: true
+    #     data: geoip.isp.isp
+    #   - label: Org.
+    #     checked: false
+    #     data: geoip.isp.organization
+
+    - name: ASN
+      items:
+      - label: AS Number
+        checked: true
+        data: geoip.asn.autonomous_system_number
+      - label: AS Org.
+        checked: true
+        data: geoip.asn.autonomous_system_organization
