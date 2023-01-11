@@ -218,15 +218,16 @@ class Runner:
     def dump(
         self,
         results,
+        fp=sys.stdout,
         output_format="json",
         csv_columns=None,
         csv_include_header=True,
         csv_escape_comma=False,
     ):
         if output_format == "json":
-            self.dump_as_json(results)
+            self.dump_as_json(results, fp=fp)
         elif output_format == "jsonl":
-            self.dump_as_json_lines(results)
+            self.dump_as_json_lines(results, fp=fp)
         elif output_format == "csv" or output_format == "tsv":
             if output_format == "csv":
                 delimiter = ","
@@ -235,6 +236,7 @@ class Runner:
 
             self.dump_as_csv(
                 results,
+                fp=fp,
                 columns=csv_columns,
                 delimiter=delimiter,
                 include_header=csv_include_header,
@@ -266,6 +268,7 @@ def run(
     input_data,
     config_file=None,
     input_type="ip",
+    fp=sys.stdout,
     output_format="json",
     csv_columns=None,
     csv_include_header=True,
@@ -288,6 +291,7 @@ def run(
     results = r.lookup(data)
     r.dump(
         results,
+        fp=fp,
         output_format=output_format,
         csv_columns=csv_columns,
         csv_include_header=csv_include_header,
