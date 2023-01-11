@@ -90,6 +90,7 @@ output:
     - geoip.city.country.iso_code
     - geoip.city.country.names.en
     - geoip.city.city.names.en
+    - geoip.city.postal.code
     - geoip.city.location.latitude
     - geoip.city.location.longitude
 
