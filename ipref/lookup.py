@@ -108,6 +108,9 @@ class Result:
                 "ip_address": self.meta.ip_address,
                 "ip_address_types": self.meta.ip_address_types,
             },
+            "dns": {
+                "reverse_name": self.dns.reverse_name,
+            },
             "geoip": {
                 "city": _get_geoip_raw_data(self.geoip.city),
                 "country": _get_geoip_raw_data(self.geoip.country),
