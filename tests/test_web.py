@@ -30,6 +30,11 @@ def test_escape_column():
     assert escape_column("foo") == "foo"
 
 
+def test_web_index_get(client):
+    res = client.get("/")
+    assert res.headers["Location"] == "/search"
+
+
 def test_web_search_get(client):
     assert client.get("/search").status_code == 200
 
