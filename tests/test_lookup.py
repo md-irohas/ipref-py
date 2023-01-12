@@ -125,6 +125,8 @@ def test_result_to_dict(result_ip4, result_ip6, result_not_ip):
         result_not_ip.to_dict()["meta"]["ip_address_types"]
         == result_not_ip.meta.ip_address_types
     )
+    assert result_ip4.to_dict()["dns"]["reverse_name"] is None
+    assert result_ip4.to_dict()["geoip"]["city"] is None
 
 
 @pytest.fixture

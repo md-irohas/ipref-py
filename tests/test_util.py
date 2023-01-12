@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 
-import datetime
 import ipaddress
 from types import SimpleNamespace
 
@@ -13,6 +12,7 @@ from ipref.util import (
     is_ip_address,
     split_data,
     unixtime_to_datetime,
+    is_in
 )
 
 
@@ -65,3 +65,10 @@ def test_split_data():
 def test_unixtime_to_datetime():
     assert unixtime_to_datetime(None) is None
     assert unixtime_to_datetime(0).isoformat() == "1970-01-01T00:00:00+00:00"
+
+
+def test_is_in():
+    assert is_in("foo", ["foo", "bar"]) is True
+    assert is_in("foo", None, ["foo", "bar"]) is True
+    assert is_in("foo", ["fizz", "buzz"]) is False
+    assert is_in("foo", None, ["fizz", "buzz"]) is False
