@@ -1,22 +1,23 @@
 # ipref
 
 `ipref-py` is a simple utility to look up IP addresses in MaxMind's GeoIP
-downloadable databases by CLI and web.
+downloadable databases by command-line and web.
 
 I often look up geolocation data of a number of IP addresses in my research,
 but existing tools do not satisfy this need.
+So, I wrote `ipref-py`.
 
 Note that the web interface must be used for internal use only such as your own
 environment and your lab. If you make it public, it can be abused for attackers
-and also violates terms of use by maxmind.
+and may also violate terms of use by MaxMind.
 
 Main features:
 
 - Look up IP addresses by MaxMind's GeoIP databases.
-- Look up hostnames of IP addresses by DNS reverse lookup.
+- Look up hostnames of IP addresses by DNS reverse lookups.
 - A command line and a simple web interface.
-- Flexible outputs (JSON, JSON-Lines, CSV, TSV).
 - Configuration by YAML files.
+- Flexible outputs (JSON, JSON-Lines, CSV, TSV).
 
 
 ## Requirements
@@ -27,15 +28,20 @@ Main features:
 
 ## Installation
 
-(Optional, but recommended) Create virtualenv environment.
+(Optional, but recommended) Create a virtualenv environment for Python.
 
 ```sh
-$ cd /path/to/some/dir/
+# /path/to/dir/ depends on your environment. e.g. /opt/ipref/
+$ cd /path/to/dir/
+
+# Create a virtualenv
 $ python3 -m venv env
+
+# Activate the virtualenv
 $ source env/bin/activate
 ```
 
-Download .whl file from [GitHub release](https://github.com/md-irohas/ipref-py/releases) page.
+Download a .whl file from the [GitHub release](https://github.com/md-irohas/ipref-py/releases) page.
 
 ```sh
 (env) $ wget https://github.com/md-irohas/ipref-py/releases/download/v0.1.0/ipref-0.1.0-py3-none-any.whl
@@ -50,7 +56,12 @@ Download .whl file from [GitHub release](https://github.com/md-irohas/ipref-py/r
 
 ## Configuration
 
-Next, make configuration file.
+Make configuration file.
+The template files for configurations are available.
+
+- GeoIP2: https://github.com/md-irohas/ipref-py/blob/main/ipref/config.yaml.orig
+- GeoLite: https://github.com/md-irohas/ipref-py/blob/main/ipref/config-geolite.yaml.orig
+
 Configuration files are loaded from the following paths:
 
 - `~/.config/ipref.yaml`
@@ -63,13 +74,13 @@ Configuration files are loaded from the following paths:
 The latter file overwrites the former one.
 
 ```sh
-# Copy configuration from https://github.com/md-irohas/ipref-py/blob/main/ipref/config.yaml.orig and edit it.
+# Copy the configuration template above and edit it.
 $ vim ~/.config/ipref.yaml
 ...(edit)...
 ```
 
 
-## CLI Example
+## CLI Examples
 
 ### Usage
 
@@ -144,32 +155,38 @@ $ ipref -I file -O csv file1.txt file2.txt ...
 ```
 
 
-## Web Example
+## Web Examples
 
 A simple web app is also avaialble.
 
 ![Screenshot](./screenshot.png)
 
 
-### Example-4: Launch web app
+### Example-4: Launch a web app
 
 Launch ipref-web from command line and access http://localhost:5000/ .
 A simple web interface like the above figure is shown.
 
 ```sh
-$ IPREF_CONF="/path/to/config.yaml" ipref-web run
+$ IPREF_CONF="path/to/config.yaml" ipref-web run
 ```
 
-The "Look-up Items" are configurable. Input IP addresses, set checkboxes, and click "Search" button!
+Input IP addresses, select checkboxes, and click "Search" button!
+The "Look-up Items" are also configurable by config.yaml.
 
 
-### Example-5: Run as production WSGI app 
+### Example-5: Run as a production WSGI app 
 
-Use gunicorn to run ipref-web as production WSGI app.
+Use gunicorn to run ipref-web as a production WSGI app.
 
 ```sh
-$ gunicorn "ipref.web:create_app()"
+$ gunicorn --env IPREF_CONF="path/to/config.yaml" "ipref.web:create_app()"
 ```
+
+Template files for systemd (as a unit) and nginx (as a reverse proxy) are also available:
+
+- Systemd's unit file: ipref-web.service
+- Nginx configuration file: nginx.conf
 
 
 ## Alternatives
