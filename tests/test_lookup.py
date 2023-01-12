@@ -225,6 +225,23 @@ def test_run():
     run([], input_type="ip")
 
 
+def test_run_with_skip_dns_lookup_reverse_name():
+    with io.StringIO() as fp:
+        run(["1.1.1.1"], config_file=TEST_CONFIG, fp=fp)
+        result = fp.getvalue().lower()
+        assert "one.one.one.one." in result
+
+    with io.StringIO() as fp:
+        run(["1.1.1.1"], config_file=TEST_CONFIG, fp=fp, csv_columns=["meta.raw_input", "dns.reverse_name"])
+        result = fp.getvalue().lower()
+        assert "one.one.one.one." in result
+
+    with io.StringIO() as fp:
+        run(["1.1.1.1"], config_file=TEST_CONFIG, fp=fp, csv_columns=["meta.raw_input"])
+        result = fp.getvalue().lower()
+        assert "one.one.one.one." not in result
+
+
 @pytest.mark.parametrize(
     "output_format",
     (
@@ -235,34 +252,32 @@ def test_run():
     )
 )
 def test_run_with_full(output_format):
-    fp = io.StringIO()
-    run(TEST_IP_LIST, config_file=TEST_CONFIG_FULL, fp=fp, output_format=output_format)
+    with io.StringIO() as fp:
+        run(TEST_IP_LIST, config_file=TEST_CONFIG_FULL, fp=fp, output_format=output_format)
 
-    result = fp.getvalue().lower()
-    for word in [
-        "public",
-        "in-addr.arpa",
-        "Asia",
-        "JP",
-        "Japan",
-        "35.68536",
-        "139.75309",
-        "True",
-        # "False",  # False is not found in anonymous_ip database
-        "Cable/DSL",
-        "15169",
-        "Google Inc.",
-        "maxmind.com",
-        "Europe",
-        "GB",
-        "United Kingdom",
-        "Boxford",
-        "OX1",
-        "1221",
-        "Telstra Pty Ltd",
-        "Telstra Internet",
-        "error",
-    ]:
-        assert word.lower() in result
-
-    fp.close()
+        result = fp.getvalue().lower()
+        for word in [
+            "public",
+            "in-addr.arpa",
+            "Asia",
+            "JP",
+            "Japan",
+            "35.68536",
+            "139.75309",
+            "True",
+            # "False",  # False is not found in anonymous_ip database
+            "Cable/DSL",
+            "15169",
+            "Google Inc.",
+            "maxmind.com",
+            "Europe",
+            "GB",
+            "United Kingdom",
+            "Boxford",
+            "OX1",
+            "1221",
+            "Telstra Pty Ltd",
+            "Telstra Internet",
+            "error",
+        ]:
+            assert word.lower() in result
