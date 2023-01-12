@@ -1,0 +1,18 @@
+[Unit]
+Description=ipref web interface
+After=network-online.target nginx.service
+
+[Service]
+Type=simple
+
+# NOTE: Change WorkingDirectory and ExecStart depending on your environment.
+WorkingDirectory=/opt/ipref
+ExecStart=/opt/ipref/env/bin/gunicorn --env "IPREF_CONF=/opt/ipref/config.yaml" --bind "0.0.0.0:8000" "ipref.web:create_app()"
+ExecReload=/bin/kill -HUP $MAINPID
+
+# NOTE: nobody/nogrop are not good for security reasons. Add a new user/group and use them.
+User=nobody
+Group=nogroup
+
+[Install]
+WantedBy=multi-user.targe
