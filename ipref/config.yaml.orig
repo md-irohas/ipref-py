@@ -138,13 +138,13 @@ web:
   # Web title.
   title: ipref
 
-  # Configuration for search box.
+  # Configuration for search checkboxes.
   search:
-    - name: Meta
-      items:
-        - label: Input
-          checked: true
-          data: meta.raw_input
+    - name: Meta  # Category name
+      items:      # List of checkboxes
+        - label: Input    # Lable of the checkbox
+          checked: true   # Default value (checked or not)
+          data: meta.raw_input  # Data ID (the same as output.columns)
         - label: IP Addr.
           checked: false
           data: meta.ip_address
@@ -262,6 +262,12 @@ web:
       - label: Org.
         checked: false
         data: geoip.isp.organization
+      - label: Mobile Country Code
+        checked: false
+        data: geoip.isp.mobile_country_code
+      - label: Mobile Network Code
+        checked: false
+        data: geoip.isp.mobile_network_code
 
     # - name: ASN
     #   items:
