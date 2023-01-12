@@ -3,7 +3,7 @@
 import logging
 
 import click
-from flask import Blueprint, Flask, render_template, request
+from flask import Blueprint, Flask, render_template, request, redirect, url_for
 from flask.cli import FlaskGroup
 
 from .__main__ import setup_logger
@@ -93,6 +93,11 @@ def get_metadata():
         data[k] = unixtime_to_datetime(v.build_epoch).isoformat()
 
     return data
+
+
+@bp.route("/")
+def index():
+    return redirect(url_for("main.search"))
 
 
 @bp.route(
