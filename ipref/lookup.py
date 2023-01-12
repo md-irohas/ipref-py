@@ -12,7 +12,7 @@ from . import __version__
 from .config import Config
 from .data.dns import dns_reverse_lookups
 from .data.geoip import GeoIPDB
-from .util import get_dot_item, ip_address_types, is_ip_address, split_data
+from .util import get_dot_item, ip_address_types, is_ip_address, split_data, is_in
 
 INPUT_TYPES = {"ip", "file"}
 OUTPUT_FORMATS = {"json", "jsonl", "csv", "tsv"}
@@ -135,9 +135,13 @@ class Runner:
     def _init_results(self, ips):
         return [Result(ip) for ip in ips]
 
-    def _lookup_dns(self, results):
+    def _lookup_dns(self, results, skip_dns_lookup_reverse_name=False):
         dns_config = self.config["dns"]
         if not dns_config["reverse_name"]["enabled"]:
+            log.info("Skip reverse name lookup (dns.reverse_name.enabled=False)")
+            return False
+        if skip_dns_lookup_reverse_name:
+            log.info("Skip reverse name lookup (skip_dns_lookup_reverse_name=True)")
             return False
 
         ips = [str(result.ip) for result in results]
@@ -174,7 +178,7 @@ class Runner:
 
         return True
 
-    def lookup(self, ips, skip_dns_reverse_lookup=False):
+    def lookup(self, ips, skip_dns_lookup_reverse_name=False):
         log.info("Lookup %d input.", len(ips))
         results = self._init_results(ips)
 
@@ -182,7 +186,7 @@ class Runner:
         self._lookup_geoip_dbs(results)
 
         log.info("Lookup in DNS.")
-        self._lookup_dns(results)
+        self._lookup_dns(results, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name)
 
         log.info("Lookup done.")
         return results
@@ -264,6 +268,13 @@ def parse_input_data(input_data, input_type):
         raise ValueError("Invalid input_type: %s" % (input_type))
 
 
+def _is_in(value, *args):
+    for arg in args:
+        if arg:
+            return value in arg
+    return False
+
+
 def run(
     input_data,
     config_file=None,
@@ -287,8 +298,10 @@ def run(
         log.warning("no input data found.")
         return
 
+    skip_dns_lookup_reverse_name = not is_in("dns.reverse_name", csv_columns, config["output"]["columns"])
+
     r = Runner(config)
-    results = r.lookup(data)
+    results = r.lookup(data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name)
     r.dump(
         results,
         fp=fp,

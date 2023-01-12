@@ -62,3 +62,10 @@ def unixtime_to_datetime(ts, tz=None):
         tz = datetime.timezone.utc
 
     return datetime.datetime.fromtimestamp(ts, tz=tz)
+
+
+def is_in(val, *args):
+    for arg in args:
+        if arg:
+            return val in arg
+    return False

@@ -10,7 +10,7 @@ from .__main__ import setup_logger
 from .config import Config
 from .data.geoip import GeoIPDB
 from .lookup import Runner
-from .util import get_dot_item, split_data, unixtime_to_datetime
+from .util import get_dot_item, split_data, unixtime_to_datetime, is_in
 
 bp = Blueprint("main", __name__)
 config = Config()
@@ -20,7 +20,7 @@ log = logging.getLogger(__name__)
 def create_app(debug=False, test_config=None):
     app = Flask(__name__)
 
-    if debug or app.config["DEBUG"]:
+    if debug or app.config["DEBUG"]:    # pragma: no cover
         setup_logger()
     if test_config is not None:
         app.config.from_mapping(test_config)
@@ -115,8 +115,9 @@ def search():
     if request.method == "POST":
         columns = columns_in_request()
         data = data_in_request()
+        skip_dns_lookup_reverse_name = not is_in("dns.reverse_name", columns)
         runner = Runner(config)
-        results = runner.lookup(data)
+        results = runner.lookup(data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name)
 
     return render_template(
         "search.html", metadata=metadata, columns=columns, results=results
