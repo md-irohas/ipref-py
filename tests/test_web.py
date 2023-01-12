@@ -54,6 +54,30 @@ def test_web_search_post(client):
     assert "error" in res.text
 
 
+def test_web_search_post_with_skip_dns_lookup_reverse_name(client_full):
+    res = client_full.post(
+        "/search",
+        data={
+            "data": "1.1.1.1",
+            "meta.raw_input": "on",
+            "dns.reverse_name": "on",
+        },
+    )
+    assert res.status_code == 200
+    assert "one.one.one.one." in res.text
+
+    # TODO: check if dns lookups are skipped (no way to check in unittest...)
+    # res = client_full.post(
+    #     "/search",
+    #     data={
+    #         "data": "1.1.1.1",
+    #         "meta.raw_input": "on",
+    #     },
+    # )
+    # assert res.status_code == 200
+    # assert "one.one.one.one." not in res.text
+
+
 def test_web_search_post_with_full_client(client_full):
     res = client_full.post(
         "/search",
