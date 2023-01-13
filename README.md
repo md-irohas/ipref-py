@@ -1,5 +1,9 @@
 # ipref
 
+![Build and Release](https://github.com/md-irohas/ipref-py/actions/workflows/release.yml/badge.svg)
+![Tests](https://github.com/md-irohas/ipref-py/actions/workflows/test.yml/badge.svg)
+
+
 `ipref-py` is a simple utility to look up IP addresses in MaxMind's GeoIP
 downloadable databases by command-line and web.
 
