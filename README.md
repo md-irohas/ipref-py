@@ -206,6 +206,6 @@ MIT License ([link](https://opensource.org/licenses/MIT)).
 
 ## Contact
 
-md (E-mail: md.irohas at gmail.com)
+mkt (E-mail: md.irohas at gmail.com)
 
 
