@@ -8,6 +8,7 @@ from flask.cli import FlaskGroup
 
 from .__main__ import setup_logger
 from .config import Config
+from .data.dns import get_nameservers
 from .data.geoip import GeoIPDB
 from .lookup import Runner
 from .util import get_dot_item, split_data, unixtime_to_datetime, is_in
@@ -118,6 +119,9 @@ def search():
         skip_dns_lookup_reverse_name = not is_in("dns.reverse_name", columns)
         runner = Runner(config)
         results = runner.lookup(data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name)
+
+    if config["dns"]["reverse_name"]["enabled"]:
+        metadata["nameservers"] = ", ".join(get_nameservers())
 
     return render_template(
         "search.html", metadata=metadata, columns=columns, results=results
