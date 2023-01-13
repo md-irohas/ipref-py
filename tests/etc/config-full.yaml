@@ -25,6 +25,11 @@ dns:
     timeout: 5
     # Number of workers which look up DNS reverse names.
     num_workers: 10
+    # List of nameservers. If null, the same nameservers as ths system are used.
+    # nameservers: null
+    nameservers:
+      - "8.8.8.8"
+      - "8.8.4.4"
 
 ############################################################################
 # MaxMind's GeoIP databases [CLI/Web]

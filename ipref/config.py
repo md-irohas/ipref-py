@@ -13,6 +13,7 @@ DEFAULT_CONFIG = {
             "enabled": False,
             "timeout": 5,
             "num_workers": 10,
+            "nameservers": None,
         }
     },
     "geoip": {

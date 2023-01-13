@@ -3,7 +3,25 @@
 
 import pytest
 
-from ipref.data.dns import dns_reverse_lookups
+from ipref.data.dns import resolver, set_nameservers, get_nameservers, dns_reverse_lookups
+
+
+def test_set_nameservers():
+    before = resolver.nameservers
+
+    set_nameservers(["192.0.2.0"])
+
+    after = resolver.nameservers
+
+    assert before != after
+    assert after == ["192.0.2.0"]
+
+    # Reset nameservers for other tests.
+    resolver.nameservers = before
+
+
+def test_get_nameservers():
+    assert isinstance(get_nameservers(), list)
 
 
 @pytest.mark.parametrize(

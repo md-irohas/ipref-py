@@ -8,10 +8,21 @@ import dns.exception
 import dns.resolver
 
 
+resolver = dns.asyncresolver.Resolver()
+
+
+def set_nameservers(ns):
+    resolver.nameservers = ns
+
+
+def get_nameservers():
+    return resolver.nameservers[:]
+
+
 def dns_reverse_lookups(ips, timeout=5, num_workers=100):
     async def dns_reverse_lookup_async(ip, sem):
         async with sem:
-            return await dns.asyncresolver.resolve_address(ip, lifetime=timeout)
+            return await resolver.resolve_address(ip, lifetime=timeout)
 
     async def dns_reverse_lookups_async(ips_):
         sem = asyncio.Semaphore(num_workers)

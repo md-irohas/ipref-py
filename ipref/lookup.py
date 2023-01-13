@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 from . import __version__
 from .config import Config
-from .data.dns import dns_reverse_lookups
+from .data.dns import set_nameservers, get_nameservers, dns_reverse_lookups
 from .data.geoip import GeoIPDB
 from .util import get_dot_item, ip_address_types, is_ip_address, split_data, is_in
 
@@ -271,13 +271,6 @@ def parse_input_data(input_data, input_type):
         raise ValueError("Invalid input_type: %s" % (input_type))
 
 
-def _is_in(value, *args):
-    for arg in args:
-        if arg:
-            return value in arg
-    return False
-
-
 def run(
     input_data,
     config_file=None,
@@ -300,6 +293,13 @@ def run(
     if len(data) == 0:
         log.warning("no input data found.")
         return
+
+    nameservers = config["dns"]["reverse_name"]["nameservers"]
+    if nameservers:
+        set_nameservers(nameservers)
+        log.info("Set nameservers: %s", get_nameservers())
+    else:
+        log.info("The default nameservers are used: %s", get_nameservers())
 
     skip_dns_lookup_reverse_name = not is_in("dns.reverse_name", csv_columns, config["output"]["columns"])
 
