@@ -72,3 +72,4 @@ def test_is_in():
     assert is_in("foo", None, ["foo", "bar"]) is True
     assert is_in("foo", ["fizz", "buzz"]) is False
     assert is_in("foo", None, ["fizz", "buzz"]) is False
+    assert is_in("foo", None, None) is False
