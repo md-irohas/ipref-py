@@ -1,10 +1,13 @@
 {% set ipref_conf = config["IPREF"] %}
+{% set title = ipref_conf["web"]["title"] or "ipref" %}
 
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title></title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{{ title }}</title>
   <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" media="screen">
 </head>
 
@@ -14,7 +17,7 @@
 <div class="col-8 mx-auto m-3">
 
   <header class="border-bottom p-3">
-    <span class="fs-1">{{ ipref_conf["web"]["title"] or "ipref" }}</span>
+    <span class="fs-1">{{ title }}</span>
   </header>
 
   <div class="col-8 mx-auto">
