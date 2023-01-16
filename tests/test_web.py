@@ -117,6 +117,7 @@ def test_web_search_post_with_full_client(client_full):
             "geoip.isp.organization": "on",
             "geoip.asn.autonomous_system_number": "on",
             "geoip.asn.autonomous_system_organization": "on",
+            "misc.include_national_flags": "on",
         },
     )
     assert res.status_code == 200
@@ -126,6 +127,7 @@ def test_web_search_post_with_full_client(client_full):
         "Asia",
         "JP",
         "Japan",
+        "🇯🇵",
         "35.68536",
         "139.75309",
         "True",
@@ -145,3 +147,15 @@ def test_web_search_post_with_full_client(client_full):
         "error",
     ]:
         assert word in res.text
+
+
+def test_web_search_post_with_full_client_without_national_flags(client_full):
+    res = client_full.post(
+        "/search",
+        data={
+            "data": " ".join(TEST_IP_LIST),
+            "geoip.country.country.iso_code": "on",
+        },
+    )
+    assert res.status_code == 200
+    assert "🇯🇵" not in res.text
