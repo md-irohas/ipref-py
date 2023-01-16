@@ -1,38 +1,39 @@
 ############################################################################
-# 'ipref' and 'ipref-web' configuration template
+# 'ipref' and 'ipref-web' configuration template file
 #
 #   This file is a configuration template which is used for both ipref and
-#   ipref-web. Read and follow comments below.
+#   ipref-web. Read and follow comments below for more details.
 #
 #   - URL: https://github.com/md-irohas/ipref-py
-#   - Revision: 1
+#   - Revision: 2
 #
 ############################################################################
 
 ############################################################################
-# DNS lookups [CLI/Web]
+# DNS lookups [CLI/WEB]
 #
 #   This section includes configurations for DNS look-ups.
 #
 ############################################################################
 dns:
-  # Configuration for reverse name look-ups (DNS queries with PTR records)
+  # Reverse name look-ups (DNS queries with PTR records)
   reverse_name:
-    # Flag to enable reverse look-ups. Note that if enabled look-ups may take
-    # some time to finish because DNS look-ups are slow.
+    # Flag to enable reverse look-ups. Note that if this is true look-ups may
+    # take some time to finish because DNS look-ups are slow.
     enabled: false
     # DNS lookup timeout (per lookup) in second.
     timeout: 5
     # Number of workers which look up DNS reverse names.
     num_workers: 10
-    # List of nameservers. If null, the same nameservers as ths system are used.
+    # List of nameservers' IP addresses. If null, the same nameservers as ths
+    # system are used.
     nameservers: null
     # nameservers:
     #   - "8.8.8.8"
     #   - "8.8.4.4"
 
 ############################################################################
-# MaxMind's GeoIP databases [CLI/Web]
+# MaxMind's GeoIP databases [CLI/WEB]
 # 
 #   This section includes configurations for MaxMind's GeoIP databases.
 #
@@ -42,29 +43,19 @@ geoip:
   # If you do not use the part of these databases, comment out the paths (like
   # 'country', 'anonymous_ip', 'asn' below)
   dbs:
-    # [GeoIP2/GeoLite] Path to country database
+    # GeoLite databases.
     # country: null
+    # city: null
+    # asn: null
 
-    # [GeoIP2/GeoLite] Path to city database
+    # GeoIP2 databases.
+    # country: null
     city: tests/data/GeoIP2-City-Test.mmdb
-
-    # [GeoIP2] Path to anonymous IP database
     # anonymous_ip: tests/data/GeoIP2-Anonymous-IP-Test.mmdb
-
-    # [GeoIP2] Path to connection type database
     connection_type: tests/data/GeoIP2-Connection-Type-Test.mmdb
-
-    # [GeoIP2] Path to domain database
     domain: tests/data/GeoIP2-Domain-Test.mmdb
-
-    # [GeoIP2] Path to enterprise database
     # enterprise: tests/data/GeoIP2-Enterprise-Test.mmdb
-
-    # [GeoIP2] Path to ISP database
     isp: tests/data/GeoIP2-ISP-Test.mmdb
-
-    # [GeoLite] Path to ASN database
-    # asn: tests/data/GeoLite2-ASN-Test.mmdb
 
 ############################################################################
 # Output [CLI]
@@ -134,7 +125,7 @@ output:
 
 
 ############################################################################
-# Web
+# WEB
 #
 #   This section includes configuraitons for the web interface.
 #
@@ -143,7 +134,7 @@ web:
   # Web title.
   title: ipref
 
-  # Configuration for search checkboxes.
+  # Search checkboxes.
   search:
     - name: Meta  # Category name
       items:      # List of checkboxes

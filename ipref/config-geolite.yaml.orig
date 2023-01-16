@@ -1,31 +1,30 @@
 ############################################################################
-# 'ipref' and 'ipref-web' configuration template for GeoLite
+# 'ipref' and 'ipref-web' configuration template file for GeoLite
 # 
 #   See config.yaml.orig for full documentation.
 #
 ############################################################################
 
 ############################################################################
-# DNS lookups [CLI/Web]
+# DNS lookups [CLI/WEB]
 ############################################################################
 dns:
   reverse_name:
     enabled: false
     timeout: 5
     num_workers: 10
+    nameservers: null
+    # nameservers:
+    #   - "8.8.8.8"
+    #   - "8.8.4.4"
 
 ############################################################################
 # MaxMind's GeoIP databases [CLI/Web]
 ############################################################################
 geoip:
   dbs:
-    # [GeoIP2/GeoLite] Path to country database
     # country: null
-
-    # [GeoIP2/GeoLite] Path to city database
     city: tests/data/GeoLite2-City.mmdb
-
-    # [GeoLite] Path to ASN database
     asn: tests/data/GeoLite2-ASN.mmdb
 
 ############################################################################
@@ -33,8 +32,6 @@ geoip:
 ############################################################################
 output:
   # [csv/tsv] List of output columns.
-  # To add a column, uncomment the following lines. To remove a column, comment
-  # out the following lines.
   columns:
     # Meta
     - meta.raw_input
@@ -70,7 +67,7 @@ web:
   # Web title.
   title: ipref
 
-  # Configuration for search box.
+  # Search checkboxes.
   search:
     - name: Meta
       items:
