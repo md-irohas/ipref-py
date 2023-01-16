@@ -99,7 +99,7 @@ def get_metadata():
 
     # DNS
     if config["dns"]["reverse_name"]["enabled"]:
-        metadata["nameservers"] = ", ".join(get_nameservers())
+        data["nameservers"] = ", ".join(get_nameservers())
 
     # GeoIP
     geoip_db = GeoIPDB().instance()
