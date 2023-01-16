@@ -3,6 +3,7 @@
 import logging
 
 import click
+import flag
 from flask import Blueprint, Flask, render_template, request, redirect, url_for
 from flask.cli import FlaskGroup
 
@@ -62,12 +63,19 @@ def escape_column(s):
     return s
 
 
+def make_flag(cc):
+    if cc is None:
+        return ""
+    return flag.flag(cc)
+
+
 @bp.app_context_processor
 def register_context_processor():
     return dict(
         get_dot_item=get_dot_item,
         get_header_name=get_header_name,
         escape_column=escape_column,
+        make_flag=make_flag,
     )
 
 
@@ -78,7 +86,7 @@ def register_context_processor():
 
 def columns_in_request():
     return [
-        key for key, value in request.form.items() if key != "data" and value == "on"
+        key for key, value in request.form.items() if key != "data" and not key.startswith("misc.") and value == "on"
     ]
 
 
@@ -89,6 +97,11 @@ def data_in_request():
 def get_metadata():
     data = {}
 
+    # DNS
+    if config["dns"]["reverse_name"]["enabled"]:
+        metadata["nameservers"] = ", ".join(get_nameservers())
+
+    # GeoIP
     geoip_db = GeoIPDB().instance()
     for k, v in geoip_db.metadata.items():
         data[k] = unixtime_to_datetime(v.build_epoch).isoformat()
@@ -119,9 +132,6 @@ def search():
         skip_dns_lookup_reverse_name = not is_in("dns.reverse_name", columns)
         runner = Runner(config)
         results = runner.lookup(data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name)
-
-    if config["dns"]["reverse_name"]["enabled"]:
-        metadata["nameservers"] = ", ".join(get_nameservers())
 
     return render_template(
         "search.html", metadata=metadata, columns=columns, results=results

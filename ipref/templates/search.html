@@ -81,11 +81,17 @@
   {% endfor %}
   </thead>
 
+  {% set include_national_flags = (request.form.get("misc.include_national_flags", "off") == "on") %}
+
   <tbody>
   {% for result in results %}
     <tr>
     {% for column in columns %}
+      {% if include_national_flags and column.endswith(".country.iso_code") %}
+      <td class="text-center">{{ escape_column(get_dot_item(result, column)) }}{{ " " + make_flag(get_dot_item(result, column)) }}</td>
+      {% else %}
       <td class="text-center">{{ escape_column(get_dot_item(result, column)) }}</td>
+      {% endif %}
     {% endfor %}
     </tr>
   {% endfor %}

@@ -273,3 +273,9 @@ web:
     #   - label: AS Org.
     #     checked: true
     #     data: geoip.asn.autonomous_system_organization
+
+    - name: Misc
+      items:
+      - label: Include National Flags in Country Code
+        checked: true
+        data: misc.include_national_flags
