@@ -9,6 +9,9 @@
 #
 ############################################################################
 
+# config file version [v2-]
+version: 2
+
 ############################################################################
 # DNS lookups [CLI/WEB]
 #
@@ -26,7 +29,7 @@ dns:
     # Number of workers which look up DNS reverse names.
     num_workers: 10
     # List of nameservers' IP addresses. If null, the same nameservers as ths
-    # system are used.
+    # system are used. [v2-]
     nameservers: null
     # nameservers:
     #   - "8.8.8.8"
@@ -274,6 +277,7 @@ web:
     #     checked: true
     #     data: geoip.asn.autonomous_system_organization
 
+    # The following items are special flags [v2-]
     - name: Misc
       items:
       - label: Include National Flags in Country Code

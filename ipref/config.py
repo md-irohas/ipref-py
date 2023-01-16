@@ -8,6 +8,7 @@ import yaml
 
 # See config.yaml.orig for the full documentation.
 DEFAULT_CONFIG = {
+    "version": 2,
     "dns": {
         "reverse_name": {
             "enabled": False,
@@ -16,10 +17,7 @@ DEFAULT_CONFIG = {
             "nameservers": None,
         }
     },
-    "geoip": {
-        "dbs": {
-        }
-    },
+    "geoip": {"dbs": {}},
     "output": {
         "columns": [
             "meta.raw_input",
@@ -59,6 +57,7 @@ log = logging.getLogger(__name__)
 
 class Config(dict):
 
+    CONFIG_VERSION = 2
     CONFIG_FILEPATHS = [
         "~/.config/ipref.yaml",
         "~/.config/ipref.yml",
@@ -72,6 +71,17 @@ class Config(dict):
         self._is_loaded = False
         self.update(**DEFAULT_CONFIG)
 
+    def _check_and_abort(self, data):
+        version = data.get("version", 1)
+        if self.CONFIG_VERSION != version:
+            raise RuntimeError(
+                "The config version is invalid. The current version is '%d', but '%d' is used."
+                % (
+                    self.CONFIG_VERSION,
+                    version,
+                )
+            )
+
     def _load(self, filename, silent=True):
         if not os.path.exists(filename):
             if silent:
@@ -83,6 +93,7 @@ class Config(dict):
         log.info("load config: %s", filename)
         with open(filename) as f:
             data = yaml.safe_load(f)
+            self._check_and_abort(data)
             self.update(**data)
 
         self._is_loaded = True
