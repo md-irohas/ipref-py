@@ -9,7 +9,7 @@ from flask.cli import FlaskGroup
 
 from .__main__ import setup_logger
 from .config import Config
-from .data.dns import get_nameservers
+from .data.dns import get_nameservers, set_nameservers
 from .data.geoip import GeoIPDB
 from .lookup import Runner
 from .util import get_dot_item, split_data, unixtime_to_datetime, is_in
@@ -32,6 +32,13 @@ def create_app(debug=False, test_config=None):
     config.load()
     if not config.is_loaded():
         app.logger.warning("no config file is loaded. the default config is used.")
+
+    nameservers = config["dns"]["reverse_name"]["nameservers"]
+    if nameservers:
+        set_nameservers(nameservers)
+        log.info("Set nameservers: %s", get_nameservers())
+    else:
+        log.info("The default nameservers are used: %s", get_nameservers())
 
     app.register_blueprint(bp)
 
