@@ -122,6 +122,10 @@ def test_web_search_post_with_full_client(client_full):
     )
     assert res.status_code == 200
     for word in [
+        # Meta
+        "nameservers: 8.8.8.8, 8.8.4.4",
+        "country: 2021-11-15",
+        # Results
         "public",
         "in-addr.arpa",
         "Asia",
