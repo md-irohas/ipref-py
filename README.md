@@ -48,19 +48,19 @@ $ source env/bin/activate
 Download a .whl file from the [GitHub release](https://github.com/md-irohas/ipref-py/releases) page.
 
 ```sh
-(env) $ wget https://github.com/md-irohas/ipref-py/releases/download/v0.1.0/ipref-0.1.0-py3-none-any.whl
+(env) $ wget https://github.com/md-irohas/ipref-py/releases/download/v0.2.0/ipref-0.2.0-py3-none-any.whl
 
 # if you want CLI only
-(env) $ pip install ipref-0.1.0-py3-none-any.whl
+(env) $ pip install ipref-0.2.0-py3-none-any.whl
 
 # if you want CLI and web interface
-(env) $ pip install ipref-0.1.0-py3-none-any.whl[web]
+(env) $ pip install ipref-0.2.0-py3-none-any.whl[web]
 ```
 
 
 ## Configuration
 
-Make configuration file.
+Make a configuration file.
 The template files for configurations are available.
 
 - GeoIP2: https://github.com/md-irohas/ipref-py/blob/main/ipref/config.yaml.orig
@@ -121,7 +121,7 @@ options:
 
 ### Example-1: First step
 
-The following example looks up "1.1.1.1" and "8.8.8.8" from command line and dump the results as CSV format.
+The following example looks up "1.1.1.1" and "8.8.8.8" from command line and dumps the results as CSV format.
 
 ```sh
 $ ipref -O csv "1.1.1.1" "8.8.8.8"
