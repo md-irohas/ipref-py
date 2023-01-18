@@ -45,11 +45,10 @@ $ python3 -m venv env
 $ source env/bin/activate
 ```
 
-Download a .whl file from the [GitHub release](https://github.com/md-irohas/ipref-py/releases) page.
+You can install `ipref-py` via pypi (plus, the wheel file is available from
+[GitHub release](https://github.com/md-irohas/ipref-py/releases) page).
 
 ```sh
-(env) $ wget https://github.com/md-irohas/ipref-py/releases/download/v0.2.0/ipref-0.2.0-py3-none-any.whl
-
 # if you want CLI only
 (env) $ pip install ipref
 
