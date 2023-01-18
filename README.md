@@ -51,10 +51,10 @@ Download a .whl file from the [GitHub release](https://github.com/md-irohas/ipre
 (env) $ wget https://github.com/md-irohas/ipref-py/releases/download/v0.2.0/ipref-0.2.0-py3-none-any.whl
 
 # if you want CLI only
-(env) $ pip install ipref-0.2.0-py3-none-any.whl
+(env) $ pip install ipref
 
 # if you want CLI and web interface
-(env) $ pip install ipref-0.2.0-py3-none-any.whl[web]
+(env) $ pip install ipref[web]
 ```
 
 
