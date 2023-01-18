@@ -1,6 +1,6 @@
 # ChangeLog
 
-## v0.2.0
+## v0.2.0 / 2023-01-18
 
 - [CLI/WEB] Add an option to specify nameservers' IP addresses for DNS lookups.
     - config.yaml.orig: dns.reverse_name.nameservers
@@ -10,7 +10,7 @@
     - config.yaml.orig: web.search[{name: Misc}]
 
 
-## v0.1.0 (2023-01-12)
+## v0.1.0 / 2023-01-12
 
 - [CLI] Support TSV for output_format.
 - [WEB] Implement a simple web interface.
