@@ -15,6 +15,16 @@ def make_config():
     return Config()
 
 
+def test_config__check_and_abort(config):
+    with pytest.raises(RuntimeError):
+        config._check_and_abort({"version": 1})
+
+
+def test_config__expand_path(config):
+    # check if ~ is expanded.
+    assert config._expand_path("~/foo/bar")[0] != "~"
+
+
 def test_config__load(config):
     # not found (silent)
     config._load("not-found")

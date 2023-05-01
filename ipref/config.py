@@ -82,7 +82,12 @@ class Config(dict):
                 )
             )
 
+    def _expand_path(self, filename):
+        return os.path.expanduser(filename)
+
     def _load(self, filename, silent=True):
+        filename = self._expand_path(filename)
+
         if not os.path.exists(filename):
             if silent:
                 log.info("load config: %s (not-found)", filename)
