@@ -228,3 +228,10 @@ web:
     #   - label: AS Org.
     #     checked: true
     #     data: geoip.asn.autonomous_system_organization
+
+    # The following items are special flags [v2-]
+    - name: Misc
+      items:
+      - label: Include National Flags in Country Code
+        checked: true
+        data: misc.include_national_flags
