@@ -1,15 +1,36 @@
 # -*- coding: utf-8 -*-
 
 
-import pytest
+import io
+from pathlib import Path
 
-from ipref.web import create_app, escape_column, get_header_name
+import pytest
+from flask import request
+
+from ipref.web import (
+    apiv1_columns,
+    apiv1_data_in_request,
+    apiv1_render_as_csv,
+    apiv1_search,
+    columns_in_request,
+    create_app,
+    data_in_request,
+    escape_column,
+    get_header_name,
+    get_metadata,
+    make_flag,
+)
 
 from .conftest import TEST_IP_LIST
 
 
 def test_create_app():
     create_app()
+
+
+############################################################################
+# Context Processors
+############################################################################
 
 
 def test_get_header_name(app):
@@ -28,6 +49,47 @@ def test_escape_column():
     )  # the order of "foo" "bar" is undefined
     assert escape_column(["foo", "bar"]) == "foo bar"
     assert escape_column("foo") == "foo"
+
+
+def test_make_flag():
+    assert make_flag(None) == ""
+    assert make_flag("JP") == "🇯🇵"
+
+
+############################################################################
+# Routes
+############################################################################
+
+
+def test_columns_in_request(app):
+    with app.test_request_context(
+        "/search",
+        method="POST",
+        data={
+            "data": "a,b,c",
+            "misc.include_national_flags": "on",
+            "meta.raw_input": "on",
+        },
+    ):
+        assert columns_in_request() == ["meta.raw_input"]
+
+
+def test_data_in_request(app):
+    with app.test_request_context(
+        "/search",
+        method="POST",
+        data={
+            "data": "a, b,c , d ,",
+        },
+    ):
+        assert data_in_request() == ["a", "b", "c", "d"]
+
+
+def test_get_metadata(app):
+    meta = get_metadata()
+    assert "nameservers" in meta
+    assert "city" in meta
+    assert "anonymous_ip" not in meta
 
 
 def test_web_index_get(client):
@@ -163,3 +225,108 @@ def test_web_search_post_with_full_client_without_national_flags(client_full):
     )
     assert res.status_code == 200
     assert "🇯🇵" not in res.text
+
+
+############################################################################
+# API (v1)
+############################################################################
+
+
+def test_apiv1_columns(app):
+    # with columns data
+    with app.test_request_context(
+        "/api/v1/search",
+        method="POST",
+        data={"columns": "meta.raw_input,meta.ip_address_types"},
+    ):
+        assert apiv1_columns() == ["meta.raw_input", "meta.ip_address_types"]
+
+    # without columns data
+    with app.test_request_context(
+        "/api/v1/search",
+        method="POST",
+    ):
+        assert apiv1_columns() == [
+            "meta.raw_input",
+            "meta.ip_address_types",
+            "geoip.city.country.iso_code",
+            "geoip.city.country.names.en",
+            "geoip.city.city.names.en",
+            "geoip.connection_type.connection_type",
+            "geoip.domain.domain",
+            "geoip.isp.autonomous_system_number",
+            "geoip.isp.autonomous_system_organization",
+            "geoip.isp.isp",
+        ]
+
+
+def test_apiv1_data_in_request(app):
+    path = Path("tests/data/ip1.txt")
+    with path.open("rb") as f:
+        with app.test_request_context(
+            "/api/v1/search", method="POST", data={"data": f}
+        ):
+            assert apiv1_data_in_request() == ["a"]
+
+
+def test_apiv1_render_as_csv(app):
+    with app.test_request_context():
+        resp = apiv1_render_as_csv(
+            ["meta.raw_input", "meta.ip_address_types"],
+            ["192.0.2.0", "192.0.2.1"],
+            skip_dns_lookup_reverse_name=False,
+            include_header=True,
+            escape_comma=True,
+        )
+        assert resp.mimetype == "text/csv"
+        assert (
+            resp.get_data(as_text=True)
+            == "meta.raw_input,meta.ip_address_types\n192.0.2.0,private\n192.0.2.1,private\n"
+        )
+
+
+def test_apiv1_search(client):
+    path = Path("tests/data/ip-list.txt")
+    with path.open("rb") as f:
+        resp = client.post(
+            "/api/v1/search?csv_noheader=0&csv_nocomma=0",
+            data={
+                "data": f,
+                "columns": "meta.raw_input,meta.ip_address_types"
+            },
+        )
+        assert resp.status_code == 200
+        assert (
+            resp.get_data(as_text=True)
+            == "meta.raw_input,meta.ip_address_types\n192.0.2.0,private\n192.0.2.1,private\n"
+        )
+
+
+def test_apiv1_search_noheader(client):
+    path = Path("tests/data/ip-list.txt")
+    with path.open("rb") as f:
+        resp = client.post(
+            "/api/v1/search?csv_noheader=1",
+            data={
+                "data": f,
+                "columns": "meta.raw_input,meta.ip_address_types"
+            },
+        )
+        assert resp.status_code == 200
+        assert (
+            resp.get_data(as_text=True)
+            == "192.0.2.0,private\n192.0.2.1,private\n"
+        )
+
+
+def test_apiv1_search_invalid_output_format(client):
+    path = Path("tests/data/ip-list.txt")
+    with path.open("rb") as f:
+        resp = client.post(
+            "/api/v1/search?format=json",
+            data={
+                "data": f,
+                "columns": "meta.raw_input,meta.ip_address_types"
+            },
+        )
+        assert resp.status_code == 400
