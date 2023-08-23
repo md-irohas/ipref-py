@@ -3,6 +3,8 @@
 /env/
 /ipref.egg-info/
 /instance/
+/tests/etc/config-real.yaml
+/tests/data-real/
 /tests/real-data/
 /.coverage
 /config.yaml
