@@ -1,5 +1,15 @@
 # ChangeLog
 
+## v0.3.0 / 2023-08-23
+
+- [WEB] Add API (v1) to look-up IP addresses.
+
+
+## v0.2.1 / 2023-05-01
+
+- [CLI/WEB] Fix a bug that tildes in filenames are not expanded.
+
+
 ## v0.2.0 / 2023-01-18
 
 - [CLI/WEB] Add an option to specify nameservers' IP addresses for DNS lookups.
