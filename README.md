@@ -192,6 +192,24 @@ Template files for systemd (as a unit) and nginx (as a reverse proxy) are also a
 - Nginx configuration file: nginx.conf
 
 
+### Example-6: API Search by cURL
+
+You can retrieve geolocation data of IP addresses by `curl` command (since v0.3.0).
+The output format is CSV (comma-sparated values) for now.
+
+```sh
+$ curl -X POST -F columns=meta.raw_input,meta.ip_address_types -F data=@path/to/ip-list.txt http://127.0.0.1:5000/api/v1/search?csv_noheader=1\&csv_nocomma=1
+```
+
+- `columns`: List of column names separeted by comma (,).
+  See `output.columns` values in [ipref/config.yaml.orig](ipref/config.yaml.orig) for the column names.
+  If ommited, the items whose `checked` values are true in `web.search` are used as default.
+- `data`: Path to a file which includes a list of IP addresses separeted by newlines (\n).
+- `csv_noheader`: If set 1, the CSV header is not shown (default: 0).
+- `csv_nocomma`: If set 1, commas in the output are replaced by '\<comma\>' (default: 0).
+  This is useful when you pass results to command like `cut`.
+
+
 ## Alternatives
 
 - mmdbinspect: https://github.com/maxmind/mmdbinspect (Official command-line lookup tool)
