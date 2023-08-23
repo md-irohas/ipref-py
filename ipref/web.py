@@ -1,10 +1,20 @@
 # -*- coding: utf-8 -*-
 
+import io
 import logging
 
 import click
 import flag
-from flask import Blueprint, Flask, render_template, request, redirect, url_for
+from flask import (
+    Blueprint,
+    Flask,
+    abort,
+    make_response,
+    redirect,
+    render_template,
+    request,
+    url_for,
+)
 from flask.cli import FlaskGroup
 
 from .__main__ import setup_logger
@@ -12,9 +22,10 @@ from .config import Config
 from .data.dns import get_nameservers, set_nameservers
 from .data.geoip import GeoIPDB
 from .lookup import Runner
-from .util import get_dot_item, split_data, unixtime_to_datetime, is_in
+from .util import get_dot_item, is_in, split_data, unixtime_to_datetime
 
 bp = Blueprint("main", __name__)
+apiv1_bp = Blueprint("apiv1", __name__, url_prefix="/api/v1")
 config = Config()
 log = logging.getLogger(__name__)
 
@@ -22,7 +33,7 @@ log = logging.getLogger(__name__)
 def create_app(debug=False, test_config=None):
     app = Flask(__name__)
 
-    if debug or app.config["DEBUG"]:    # pragma: no cover
+    if debug or app.config["DEBUG"]:  # pragma: no cover
         setup_logger()
     if test_config is not None:
         app.config.from_mapping(test_config)
@@ -41,6 +52,7 @@ def create_app(debug=False, test_config=None):
         log.info("The default nameservers are used: %s", get_nameservers())
 
     app.register_blueprint(bp)
+    app.register_blueprint(apiv1_bp)
 
     geoip_db = GeoIPDB.instance()
     geoip_db.setup_dbs(**config["geoip"]["dbs"])
@@ -93,7 +105,9 @@ def register_context_processor():
 
 def columns_in_request():
     return [
-        key for key, value in request.form.items() if key != "data" and not key.startswith("misc.") and value == "on"
+        key
+        for key, value in request.form.items()
+        if key != "data" and not key.startswith("misc.") and value == "on"
     ]
 
 
@@ -138,11 +152,87 @@ def search():
         data = data_in_request()
         skip_dns_lookup_reverse_name = not is_in("dns.reverse_name", columns)
         runner = Runner(config)
-        results = runner.lookup(data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name)
+        results = runner.lookup(
+            data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name
+        )
 
     return render_template(
         "search.html", metadata=metadata, columns=columns, results=results
     )
+
+
+############################################################################
+# API (v1)
+############################################################################
+
+
+def apiv1_columns():
+    if "columns" in request.form:
+        columns = request.form["columns"].split(",")
+        columns = map(lambda x: x.strip(), columns)
+        return list(columns)
+    else:
+        columns = []
+        for category in config["web"]["search"]:
+            for item in category["items"]:
+                if item["data"].startswith("misc."):
+                    continue
+                if item["checked"]:
+                    columns.append(item["data"])
+        return columns
+
+
+def apiv1_data_in_request():
+    # NOTE: The read data is a bytes object.
+    return split_data(request.files["data"].read().decode("utf-8"))
+
+
+def apiv1_render_as_csv(
+    columns, data, skip_dns_lookup_reverse_name, include_header, escape_comma
+):
+    runner = Runner(config)
+    results = runner.lookup(
+        data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name
+    )
+
+    buffer = io.StringIO()
+    runner.dump_as_csv(
+        results,
+        fp=buffer,
+        columns=columns,
+        include_header=include_header,
+        escape_comma=escape_comma,
+    )
+
+    resp = make_response(buffer.getvalue(), 200)
+    resp.mimetype = "text/csv"
+    return resp
+
+
+@apiv1_bp.route("/search", methods=("POST",))
+def apiv1_search():
+    columns = apiv1_columns()
+    data = apiv1_data_in_request()
+    output_format = request.args.get("format", "csv")
+    skip_dns_lookup_reverse_name = not is_in("dns.reverse_name", columns)
+    csv_include_header = False if int(request.args.get("csv_noheader", 0)) else True
+    csv_escape_comma = True if int(request.args.get("csv_nocomma", 0)) else False
+
+    if output_format == "csv":
+        return apiv1_render_as_csv(
+            columns,
+            data,
+            skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name,
+            include_header=csv_include_header,
+            escape_comma=csv_escape_comma,
+        )
+    else:
+        abort(400)
+
+
+############################################################################
+# Run
+############################################################################
 
 
 @click.group(cls=FlaskGroup, create_app=create_app)
