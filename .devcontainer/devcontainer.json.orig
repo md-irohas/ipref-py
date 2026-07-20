@@ -1,0 +1,70 @@
+// NOTE for Colima users:
+// Colima's default DNS path uses Lima's user-v2 (gvisor-tap-vsock) DNS proxy.
+// At the time of writing (2026-07-20), it does not correctly forward PTR (reverse DNS) queries
+// and returns an empty NOERROR response instead of forwarding the request to the
+// configured upstream resolver.
+//
+// As a result, reverse DNS lookups (e.g. net.LookupAddr) may fail inside a
+// devcontainer running on Colima, even though they succeed on the host or when
+// using a public DNS server directly (e.g. 8.8.8.8).
+//
+// This test may therefore fail on Colima's default configuration. It is an
+// environment limitation rather than an application bug.
+//
+// See: https://github.com/containers/gvisor-tap-vsock/issues/612
+// 
+// Workaround:
+// Configure Colima to use public DNS servers directly by adding the following
+// to ~/.colima/default/colima.yaml, then restart Colima.
+//
+//   network:
+//     dns: [8.8.8.8, 8.8.4.4]
+//
+
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/python
+{
+	"name": "ipref-py",
+
+	// Container image.
+	"image": "mcr.microsoft.com/devcontainers/python:3-3.12-trixie",
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Environment variables.
+	"remoteEnv": {
+		"PATH": "/home/vscode/.local/bin/:${containerEnv:PATH}",
+		"VIRTUAL_ENV": "${containerWorkspaceFolder}/.venv"
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [
+		5000	// ipref-web (Flask)
+	],
+
+	// Use 'onCreateCommand' to run commands first after the container is created.
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"onCreateCommand": "pip install --user uv",
+	"postCreateCommand": "uv sync --all-extras --dev",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"charliermarsh.ruff",
+				"astral-sh.ty"
+			],
+			"settings": {
+				"python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+				"python.experiments.enabled": false,	// Disable python experimental features to avoid unexpected behavior.
+				"python.testing.pytestEnabled": true,
+				"python.testing.pytestPath": "${workspaceFolder}/.venv/bin/pytest"
+			}
+		}
+	}
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

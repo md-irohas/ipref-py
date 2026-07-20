@@ -43,6 +43,9 @@ This project uses the flat layout.
     - `settings.json`: Claude Code project settings (asks for confirmation
       before `git commit`/`git push` and install commands)
     - `settings.local.json`: Personal overrides **(not tracked)**
+- `.devcontainer/`
+    - `devcontainer.json.orig`: Template of the DevContainer configuration
+    - `devcontainer.json`: DevContainer configuration **(not tracked)**
 - `.github/`
     - `ISSUE_TEMPLATE/`: Issue templates
     - `PULL_REQUEST_TEMPLATE/`: Pull request templates
@@ -80,6 +83,18 @@ This project uses the flat layout.
 
 Set up the development environment with the following steps.
 
+The following two environments are supported:
+
+- Local environment:
+    - Develop and run tests on your local machine.
+- DevContainer environment (w/ VSCode):
+    - Develop and run tests inside a docker container.
+
+In both environments, the development tasks are defined in `Makefile.orig`.
+
+
+### Local environment
+
 `uv` is used as the package manager, so install it first:
 
 https://docs.astral.sh/uv/getting-started/installation/
@@ -95,6 +110,27 @@ Install the libraries for development with `uv`:
 ```sh
 $ make install-dev
 ```
+
+
+### DevContainer environment
+
+Install VSCode and the Dev Containers extension of VSCode.
+
+Create a `devcontainer.json` and a `Makefile`:
+
+```sh
+# Copy the DevContainer configuration and edit it for your environment if
+# necessary. devcontainer.json is not tracked by git.
+$ cp -vi .devcontainer/devcontainer.json.orig .devcontainer/devcontainer.json
+
+$ cp -vi Makefile.orig Makefile
+```
+
+Run "Dev Containers: Rebuild and Reopen in Container" from the command
+palette of VSCode.
+
+The libraries for development are installed automatically
+(`uv sync --all-extras --dev`).
 
 
 ## Tasks
@@ -154,6 +190,22 @@ $ make test
 ```
 
 Some tests use MaxMind's test databases in `tests/data/`.
+
+
+### Development server (web interface)
+
+To run the Flask development server for the web interface, use the following
+command:
+
+```sh
+# Set the IPREF_CONF environment variable to your configuration file if
+# necessary.
+$ make serve
+```
+
+The server listens on http://localhost:5000/ by default.
+Do NOT use this server in production (see README.md for production
+deployment with gunicorn).
 
 
 ### Version update

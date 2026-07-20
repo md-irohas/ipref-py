@@ -59,6 +59,14 @@ show-usage:
 	uv run ipref --help > /dev/null
 
 
+# run Flask development server for the web interface.
+# set the IPREF_CONF environment variable to your configuration file if
+# necessary. do NOT use this server in production.
+.PHONY: serve
+serve:
+	uv run ipref-web run --debug
+
+
 # make requirements.txt and requirements-dev.txt.
 .PHONY: freeze
 freeze:

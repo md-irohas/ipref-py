@@ -37,6 +37,7 @@ coverage.xml
 
 # temporal files
 /Makefile
+/.devcontainer/devcontainer.json
 
 # ipref-specific
 /instance/
