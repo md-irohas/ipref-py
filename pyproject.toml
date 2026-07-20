@@ -1,3 +1,74 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["uv_build>=0.11.28,<0.12.0"]
+build-backend = "uv_build"
+
+[project]
+name = "ipref"
+version = "0.3.0"
+authors = [
+	{ name = "mkt", email = "md.irohas@gmail.com" }
+]
+description = "A simple utility to lookup IP addresses by MaxMind's GeoIP databases (CLI & WEB)."
+readme = "README.md"
+license = { file = "LICENSE" }
+
+requires-python = ">=3.9"
+classifiers = [
+	"Programming Language :: Python :: 3",
+	"Operating System :: OS Independent"
+]
+dependencies = [
+	"dnspython",
+	"geoip2",
+	"pyyaml",
+]
+
+[project.optional-dependencies]
+web = [
+	"Flask",
+	"gunicorn",
+	"emoji-country-flag",
+]
+
+[project.urls]
+Homepage = "https://github.com/md-irohas/ipref-py/"
+Issues = "https://github.com/md-irohas/ipref-py/issues"
+
+[project.scripts]
+ipref = "ipref.__main__:main"
+ipref-web = "ipref.web:run_dev"
+
+[tool.ruff]
+line-length = 127
+
+[tool.ruff.lint]
+# E/W: pycodestyle, F: Pyflakes, I: isort, UP: pyupgrade, B: flake8-bugbear
+select = ["E", "W", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+addopts = [
+	"--cov=./ipref/",
+	"--cov-report=term",
+	"--cov-report=html",
+	"--log-cli-level=INFO"
+]
+
+[tool.coverage.run]
+omit = [
+	"*/__main__.py",
+	"tests/*.py",
+]
+
+[tool.uv.build-backend]
+module-name = "ipref"
+module-root = ""
+
+# for uv
+[dependency-groups]
+dev = [
+	"ruff",
+	"pytest",
+	"pytest-cov",
+	"pytest-mock",
+	"ty",
+]

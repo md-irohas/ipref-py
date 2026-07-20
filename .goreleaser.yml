@@ -1,5 +1,7 @@
+version: 2
 project_name: ipref-py
 
+# ./dist/ conflicts with python's build package, so change it to ./dist-release/
 dist: ./dist-release/
 
 builds:
@@ -18,14 +20,17 @@ changelog:
 
   filters:
     exclude:
-      - "^build"
-      - "^chore"
-      - "^ci"
-      - "^docs"
-      - "^test"
+      # - "^build"
+      # - "^chore"
+      # - "^ci"
+      # - "^docs"
+      # - "^test"
       - "^Merge"
 
 release:
   prerelease: auto
+  footer: |
+    ## Full Changelog
+    https://github.com/md-irohas/ipref-py/compare/{{ .PreviousTag }}...{{ .Tag }}
   extra_files:
     - glob: ./dist/ipref*

@@ -1,5 +1,0 @@
-graft ipref/static/
-graft ipref/templates/
-include ipref/config.yaml.orig
-include ipref/config-geolite.yaml.orig
-prune tests/

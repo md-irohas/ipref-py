@@ -26,7 +26,7 @@ Main features:
 
 ## Requirements
 
-- Python 3.7-
+- Python 3.9 or later
 - Linux or macOS (It may work in Windows but I have not checked yet.)
 
 
@@ -188,8 +188,8 @@ $ gunicorn --env IPREF_CONF="path/to/config.yaml" "ipref.web:create_app()"
 
 Template files for systemd (as a unit) and nginx (as a reverse proxy) are also available:
 
-- Systemd's unit file: ipref-web.service
-- Nginx configuration file: nginx.conf
+- Systemd's unit file: [etc/ipref-web.service](etc/ipref-web.service)
+- Nginx configuration file: [etc/nginx.conf](etc/nginx.conf)
 
 
 ### Example-6: API Search by cURL
@@ -216,13 +216,19 @@ $ curl -X POST -F columns=meta.raw_input,meta.ip_address_types -F data=@path/to/
 - geoiplookup
 
 
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for how to contribute (bug reports,
+feature requests, and pull requests), and [README-dev.md](README-dev.md) for
+the development guide.
+
+
 ## License
 
-MIT License ([link](https://opensource.org/licenses/MIT)).
+MIT License (see [LICENSE](LICENSE)).
 
 
 ## Contact
 
 mkt (E-mail: md.irohas at gmail.com)
-
 

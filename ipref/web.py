@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import io
 import logging
 
@@ -71,7 +69,7 @@ def get_header_name(s):
             if item["data"] == s:
                 return item["label"]
 
-    raise ValueError("invalid 'data' value in web.search: %s" % (s))
+    raise ValueError(f"invalid 'data' value in web.search: {s}")
 
 
 def escape_column(s):
@@ -104,11 +102,7 @@ def register_context_processor():
 
 
 def columns_in_request():
-    return [
-        key
-        for key, value in request.form.items()
-        if key != "data" and not key.startswith("misc.") and value == "on"
-    ]
+    return [key for key, value in request.form.items() if key != "data" and not key.startswith("misc.") and value == "on"]
 
 
 def data_in_request():
@@ -152,13 +146,9 @@ def search():
         data = data_in_request()
         skip_dns_lookup_reverse_name = not is_in("dns.reverse_name", columns)
         runner = Runner(config)
-        results = runner.lookup(
-            data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name
-        )
+        results = runner.lookup(data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name)
 
-    return render_template(
-        "search.html", metadata=metadata, columns=columns, results=results
-    )
+    return render_template("search.html", metadata=metadata, columns=columns, results=results)
 
 
 ############################################################################
@@ -187,13 +177,9 @@ def apiv1_data_in_request():
     return split_data(request.files["data"].read().decode("utf-8"))
 
 
-def apiv1_render_as_csv(
-    columns, data, skip_dns_lookup_reverse_name, include_header, escape_comma
-):
+def apiv1_render_as_csv(columns, data, skip_dns_lookup_reverse_name, include_header, escape_comma):
     runner = Runner(config)
-    results = runner.lookup(
-        data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name
-    )
+    results = runner.lookup(data, skip_dns_lookup_reverse_name=skip_dns_lookup_reverse_name)
 
     buffer = io.StringIO()
     runner.dump_as_csv(

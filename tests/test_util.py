@@ -1,19 +1,9 @@
-# -*- coding: utf-8 -*-
-
-
 import ipaddress
 from types import SimpleNamespace
 
 import pytest
 
-from ipref.util import (
-    get_dot_item,
-    ip_address_types,
-    is_ip_address,
-    split_data,
-    unixtime_to_datetime,
-    is_in
-)
+from ipref.util import get_dot_item, ip_address_types, is_in, is_ip_address, split_data, unixtime_to_datetime
 
 
 def test_ip_address():

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import io
 import json
 
@@ -23,7 +20,7 @@ from ipref.lookup import (
     run,
 )
 
-from .conftest import TEST_IP_LIST, TEST_CONFIG, TEST_CONFIG_FULL
+from .conftest import TEST_CONFIG, TEST_CONFIG_FULL, TEST_IP_LIST
 
 
 def test_is_valid_input_type():
@@ -121,10 +118,7 @@ def test_result_to_row(result_ip4, result_ip6, result_not_ip):
 def test_result_to_dict(result_ip4, result_ip6, result_not_ip):
     assert result_ip4.to_dict()["meta"]["raw_input"] == result_ip4.meta.raw_input
     assert result_ip6.to_dict()["meta"]["ip_address"] == result_ip6.meta.ip_address
-    assert (
-        result_not_ip.to_dict()["meta"]["ip_address_types"]
-        == result_not_ip.meta.ip_address_types
-    )
+    assert result_not_ip.to_dict()["meta"]["ip_address_types"] == result_not_ip.meta.ip_address_types
     assert result_ip4.to_dict()["dns"]["reverse_name"] is None
     assert result_ip4.to_dict()["geoip"]["city"] is None
 
@@ -208,9 +202,7 @@ def test_parse_input_data(capsys, monkeypatch):
     assert parse_input_data(["a", "b", "c"], "ip") == ["a", "b", "c"]
 
     # files
-    assert parse_input_data(
-        ["tests/data/ip1.txt", "tests/data/ip2.txt", "tests/data/ip3.txt"], "file"
-    ) == ["a", "b", "c", "d"]
+    assert parse_input_data(["tests/data/ip1.txt", "tests/data/ip2.txt", "tests/data/ip3.txt"], "file") == ["a", "b", "c", "d"]
 
     # file (stdin)
     monkeypatch.setattr("sys.stdin", io.StringIO("a b c"))
@@ -249,7 +241,7 @@ def test_run_with_skip_dns_lookup_reverse_name():
         "jsonl",
         "csv",
         "tsv",
-    )
+    ),
 )
 def test_run_with_full(output_format):
     with io.StringIO() as fp:

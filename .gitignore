@@ -1,10 +1,45 @@
+# editor
+.vscode/
+*.swp
+.DS_Store
+
+# Claude Code (personal overrides)
+.claude/settings.local.json
+
+# build
 /build/
 /dist/
-/env/
-/ipref.egg-info/
+/dist-release/
+/*.egg-info/
+
+# cache
+__pycache__/
+*.py[cod]
+.cache/
+.ruff_cache/
+
+# virtualenv
+.env/
+.venv/
+env/
+env-dev/
+venv/
+venv-dev/
+
+# test
+.pytest_cache/
+
+# coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# temporal files
+/Makefile
+
+# ipref-specific
 /instance/
+/config.yaml
 /tests/etc/config-real.yaml
 /tests/data-real/
-/tests/real-data/
-/.coverage
-/config.yaml

@@ -1,0 +1,73 @@
+
+# do nothing.
+.PHONY: all
+all:
+
+
+# install libraries for app.
+.PHONY: install
+install:
+	uv sync --all-extras
+
+
+# install libraries for dev.
+.PHONY: install-dev
+install-dev:
+	uv sync --all-extras --dev
+
+
+# build app.
+.PHONY: build
+build:
+	uv build
+
+
+# check formatter.
+.PHONY: format
+format:
+	uv run ruff format --check .
+
+
+# apply formatter.
+.PHONY: format-fix
+format-fix:
+	uv run ruff format .
+
+
+# lint package.
+.PHONY: lint
+lint:
+	uv run ruff check .
+
+
+# apply lint fixes.
+.PHONY: lint-fix
+lint-fix:
+	uv run ruff check --fix .
+
+
+# type check package.
+.PHONY: typecheck
+typecheck:
+	uv run ty check
+
+
+# run help.
+.PHONY: show-usage
+show-usage:
+	uv run ipref --version > /dev/null
+	uv run ipref --help > /dev/null
+
+
+# make requirements.txt and requirements-dev.txt.
+.PHONY: freeze
+freeze:
+	uv export --format requirements.txt --no-hashes --all-extras --no-dev > requirements.txt
+	uv export --format requirements.txt --no-hashes --all-extras > requirements-dev.txt
+
+
+# test package.
+# pytest options are set in pyproject.toml
+.PHONY: test
+test:
+	uv run pytest

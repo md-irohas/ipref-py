@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-
-
 import pytest
 
-from ipref.data.dns import resolver, set_nameservers, get_nameservers, dns_reverse_lookups
+from ipref.data.dns import dns_reverse_lookups, get_nameservers, resolver, set_nameservers
 
 
 def test_set_nameservers():
@@ -48,6 +45,4 @@ def test_get_nameservers():
     ),
 )
 def test_dns_reverse_lookups(ips, hostnames, timeout, num_workers):
-    assert (
-        dns_reverse_lookups(ips, timeout=timeout, num_workers=num_workers) == hostnames
-    )
+    assert dns_reverse_lookups(ips, timeout=timeout, num_workers=num_workers) == hostnames

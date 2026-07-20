@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import logging
 import os
 
@@ -56,7 +53,6 @@ log = logging.getLogger(__name__)
 
 
 class Config(dict):
-
     CONFIG_VERSION = 2
     CONFIG_FILEPATHS = [
         "~/.config/ipref.yaml",
@@ -75,11 +71,7 @@ class Config(dict):
         version = data.get("version", 1)
         if self.CONFIG_VERSION != version:
             raise RuntimeError(
-                "The config version is invalid. The current version is '%d', but '%d' is used."
-                % (
-                    self.CONFIG_VERSION,
-                    version,
-                )
+                f"The config version is invalid. The current version is '{self.CONFIG_VERSION}', but '{version}' is used."
             )
 
     def _expand_path(self, filename):

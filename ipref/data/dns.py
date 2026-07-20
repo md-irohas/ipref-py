@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-
-
 import asyncio
 
 import dns.asyncresolver
 import dns.exception
 import dns.resolver
-
 
 resolver = dns.asyncresolver.Resolver()
 

@@ -1,48 +1,136 @@
+# This workflow builds and releases the package when pushed to the main or
+# release branches with a new version string in pyproject.toml.
 name: Build and Release
 
 on:
-  push:
-    tags:
-      - v*
+  pull_request:
+    types: [closed]
+    branches:
+      - 'main'
+      - 'release/v*'
+  workflow_dispatch:
+
+# NOTE: contents:write is required to push tags and create releases.
+permissions:
+  contents: write
 
 jobs:
-  release:
-
+  # Create a new tag if the version is not tagged yet.
+  tag:
+    if: |
+      (
+        github.event_name == 'pull_request' &&
+        github.event.pull_request.merged == true
+      ) || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 3
+    outputs:
+      version: ${{ steps.check_version.outputs.version }}
+      is_release_candidate: ${{ steps.check_version.outputs.is_release_candidate }}
+      is_new_version: ${{ steps.check_version.outputs.is_new_version }}
 
-    # NOTE: fetch all histories of the repositories to create changelog.
     steps:
-    - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
+
+      - name: Fetch tags
+        run: git fetch --tags
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: 3.12
+
+      - name: Install dependencies
+        # NOTE: --locked fails if uv.lock is out of sync with pyproject.toml.
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+          uv sync --locked --all-extras --dev
+
+      - name: Check version in pyproject.toml
+        id: check_version
+        run: |
+          # dump current version
+          version="v$(uv version --short)"
+          echo "python: ${version}"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+
+          # check if it's a release candidate
+          if [[ "${version}" =~ rc[0-9]+$ ]]; then
+            echo "This is a release candidate."
+            echo "is_release_candidate=true" >> $GITHUB_OUTPUT
+          else
+            echo "This is NOT a release candidate."
+            echo "is_release_candidate=false" >> $GITHUB_OUTPUT
+          fi
+
+          # check if it's a new version
+          if git tag --list | grep -qx "${version}"; then
+            echo "Tag exists. Skip the following steps."
+            echo "is_new_version=false" >> $GITHUB_OUTPUT
+          else
+            echo "Tag does not exist."
+            echo "is_new_version=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create a new tag and push it to origin
+        if: |
+          (
+            steps.check_version.outputs.is_new_version == 'true' &&
+            steps.check_version.outputs.is_release_candidate == 'false'
+          )
+        run: |
+          version="${{ steps.check_version.outputs.version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag ${version}
+          git push origin ${version}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Build and release the package when a new tag is created.
+  release:
+    runs-on: ubuntu-latest
+    if: |
+      (
+        needs.tag.outputs.is_new_version == 'true' &&
+        needs.tag.outputs.is_release_candidate == 'false'
+      )
+
+    needs: tag
+    timeout-minutes: 3
+
+    steps:
+    - uses: actions/checkout@v7
       with:
+        # NOTE: fetch all histories of the repository to create changelog.
         fetch-depth: 0
 
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - name: Set up Python
+      uses: actions/setup-python@v6
       with:
-        python-version: 3.8
+        python-version: "3.12"
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install build
+        pip install uv
+
+    - name: Check consistency of the versions
+      run: |
+        echo "python: $(uv version --short)"
+        echo "git: $(git describe --tag --abbrev=0)"
+        test "v$(uv version --short)" = "$(git describe --tag --abbrev=0)"
 
     - name: Build packages
       run: |
-        python -m build
+        uv build
 
+    # NOTE: The write permission is declared in the top-level `permissions` block.
     - name: Release package
-      uses: goreleaser/goreleaser-action@v2
+      uses: goreleaser/goreleaser-action@v7
       with:
-        version: latest
-        args: release --rm-dist
+        version: '~> v2'
+        args: release --clean
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Upload package to PyPi
-      env:
-        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-      run: |
-        python -m pip install --upgrade twine
-        twine upload dist/ipref-*

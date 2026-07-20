@@ -1,17 +1,11 @@
-# -*- coding: utf-8 -*-
-
-
-import io
 from pathlib import Path
 
 import pytest
-from flask import request
 
 from ipref.web import (
     apiv1_columns,
     apiv1_data_in_request,
     apiv1_render_as_csv,
-    apiv1_search,
     columns_in_request,
     create_app,
     data_in_request,
@@ -263,9 +257,7 @@ def test_apiv1_columns(app):
 def test_apiv1_data_in_request(app):
     path = Path("tests/data/ip1.txt")
     with path.open("rb") as f:
-        with app.test_request_context(
-            "/api/v1/search", method="POST", data={"data": f}
-        ):
+        with app.test_request_context("/api/v1/search", method="POST", data={"data": f}):
             assert apiv1_data_in_request() == ["a"]
 
 
@@ -279,10 +271,7 @@ def test_apiv1_render_as_csv(app):
             escape_comma=True,
         )
         assert resp.mimetype == "text/csv"
-        assert (
-            resp.get_data(as_text=True)
-            == "meta.raw_input,meta.ip_address_types\n192.0.2.0,private\n192.0.2.1,private\n"
-        )
+        assert resp.get_data(as_text=True) == "meta.raw_input,meta.ip_address_types\n192.0.2.0,private\n192.0.2.1,private\n"
 
 
 def test_apiv1_search(client):
@@ -290,16 +279,10 @@ def test_apiv1_search(client):
     with path.open("rb") as f:
         resp = client.post(
             "/api/v1/search?csv_noheader=0&csv_nocomma=0",
-            data={
-                "data": f,
-                "columns": "meta.raw_input,meta.ip_address_types"
-            },
+            data={"data": f, "columns": "meta.raw_input,meta.ip_address_types"},
         )
         assert resp.status_code == 200
-        assert (
-            resp.get_data(as_text=True)
-            == "meta.raw_input,meta.ip_address_types\n192.0.2.0,private\n192.0.2.1,private\n"
-        )
+        assert resp.get_data(as_text=True) == "meta.raw_input,meta.ip_address_types\n192.0.2.0,private\n192.0.2.1,private\n"
 
 
 def test_apiv1_search_noheader(client):
@@ -307,16 +290,10 @@ def test_apiv1_search_noheader(client):
     with path.open("rb") as f:
         resp = client.post(
             "/api/v1/search?csv_noheader=1",
-            data={
-                "data": f,
-                "columns": "meta.raw_input,meta.ip_address_types"
-            },
+            data={"data": f, "columns": "meta.raw_input,meta.ip_address_types"},
         )
         assert resp.status_code == 200
-        assert (
-            resp.get_data(as_text=True)
-            == "192.0.2.0,private\n192.0.2.1,private\n"
-        )
+        assert resp.get_data(as_text=True) == "192.0.2.0,private\n192.0.2.1,private\n"
 
 
 def test_apiv1_search_invalid_output_format(client):
@@ -324,9 +301,6 @@ def test_apiv1_search_invalid_output_format(client):
     with path.open("rb") as f:
         resp = client.post(
             "/api/v1/search?format=json",
-            data={
-                "data": f,
-                "columns": "meta.raw_input,meta.ip_address_types"
-            },
+            data={"data": f, "columns": "meta.raw_input,meta.ip_address_types"},
         )
         assert resp.status_code == 400

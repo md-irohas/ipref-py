@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 """A helper module for MaxMind's GeoIP databases."""
-
 
 import logging
 
@@ -11,7 +9,6 @@ log = logging.getLogger(__name__)
 
 
 class GeoIPDB:
-
     _instance = None
 
     @classmethod
@@ -62,7 +59,7 @@ class GeoIPDB:
 
     def lookup(self, dbname, addr):
         if not self.has_db(dbname):
-            raise ValueError("db not found: %s" % (dbname))
+            raise ValueError(f"db not found: {dbname}")
 
         db = self._dbs[dbname]
         try:

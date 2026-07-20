@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import csv
 import ipaddress
 import json
@@ -10,9 +7,9 @@ from types import SimpleNamespace
 
 from . import __version__
 from .config import Config
-from .data.dns import set_nameservers, get_nameservers, dns_reverse_lookups
+from .data.dns import dns_reverse_lookups, get_nameservers, set_nameservers
 from .data.geoip import GeoIPDB
-from .util import get_dot_item, ip_address_types, is_ip_address, split_data, is_in
+from .util import get_dot_item, ip_address_types, is_in, is_ip_address, split_data
 
 INPUT_TYPES = {"ip", "file"}
 OUTPUT_FORMATS = {"json", "jsonl", "csv", "tsv"}
@@ -31,7 +28,8 @@ def is_valid_output_format(s):
 
 def _get_geoip_raw_data(record):
     if record:
-        return record.raw
+        # geoip2 v5 renamed the `raw` attribute to `to_dict()`.
+        return record.to_dict()
     else:
         return None
 
@@ -48,17 +46,17 @@ def escape_csv_column(col, escape_comma=False):
 
 
 class ResultJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, Result):
-            return obj.to_dict()
-        if isinstance(obj, set):
-            return list(obj)
-        if isinstance(obj, ipaddress.IPv4Address):
-            return str(obj)
-        if isinstance(obj, ipaddress.IPv6Address):
-            return str(obj)
+    def default(self, o):
+        if isinstance(o, Result):
+            return o.to_dict()
+        if isinstance(o, set):
+            return list(o)
+        if isinstance(o, ipaddress.IPv4Address):
+            return str(o)
+        if isinstance(o, ipaddress.IPv6Address):
+            return str(o)
         # NOTE: This will raise TypeError.
-        return json.JSONEncoder.default(self, obj)
+        return json.JSONEncoder.default(self, o)
 
 
 class Result:
@@ -95,10 +93,7 @@ class Result:
         return get_dot_item(self, key)
 
     def to_row(self, columns, escape_comma=False):
-        return [
-            escape_csv_column(self[column], escape_comma=escape_comma)
-            for column in columns
-        ]
+        return [escape_csv_column(self[column], escape_comma=escape_comma) for column in columns]
 
     def to_dict(self):
         return {
@@ -213,9 +208,7 @@ class Runner:
         if columns is None:
             columns = self.config["output"]["columns"]
 
-        writer = csv.writer(
-            fp, dialect="unix", quoting=csv.QUOTE_MINIMAL, delimiter=delimiter
-        )
+        writer = csv.writer(fp, dialect="unix", quoting=csv.QUOTE_MINIMAL, delimiter=delimiter)
         if include_header:
             writer.writerow(columns)
 
@@ -250,7 +243,7 @@ class Runner:
                 escape_comma=csv_escape_comma,
             )
         else:
-            raise ValueError("Invalid output_format: %s" % (output_format))
+            raise ValueError(f"Invalid output_format: {output_format}")
 
 
 def parse_input_data(input_data, input_type):
@@ -268,7 +261,7 @@ def parse_input_data(input_data, input_type):
             data = sys.stdin.read()
         return split_data(data)
     else:
-        raise ValueError("Invalid input_type: %s" % (input_type))
+        raise ValueError(f"Invalid input_type: {input_type}")
 
 
 def run(
