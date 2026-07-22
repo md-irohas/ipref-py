@@ -1,0 +1,52 @@
+# git
+.git/
+.gitignore
+
+# editor
+.vscode/
+*.swp
+.DS_Store
+
+# CI / dev tooling
+.github/
+.devcontainer/
+.claude/
+AGENTS.md
+CONTRIBUTING.md
+README-dev.md
+Makefile
+Makefile.orig
+
+# build artifacts
+build/
+dist/
+dist-release/
+*.egg-info/
+
+# cache
+__pycache__/
+*.py[cod]
+.cache/
+.ruff_cache/
+.pytest_cache/
+
+# virtualenv
+.env/
+.venv/
+env/
+venv/
+
+# coverage
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml
+
+# docker
+Dockerfile
+.dockerignore
+
+# ipref-specific local files
+instance/
+config.yaml
+screenshot.png
