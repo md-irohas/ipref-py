@@ -55,3 +55,7 @@ def main():
         csv_include_header=not args.csv_exclude_header,
         csv_escape_comma=args.csv_escape_comma,
     )
+
+
+if __name__ == "__main__":
+    main()
