@@ -6,7 +6,8 @@ effectively in the "ipref-py" repository.
 
 ## Prerequisites
 
-- Write answers, code comments, and commit messages in English.
+- Write answers, code comments, commit messages, issues, and pull requests in
+  English.
 - When you make large changes, present a plan first.
 - If anything is unclear, investigate the files in the repository and then ask
   the developer.
