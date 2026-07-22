@@ -117,7 +117,7 @@ def get_metadata():
         data["nameservers"] = ", ".join(get_nameservers())
 
     # GeoIP
-    geoip_db = GeoIPDB().instance()
+    geoip_db = GeoIPDB.instance()
     for k, v in geoip_db.metadata.items():
         data[k] = unixtime_to_datetime(v.build_epoch).isoformat()
 
