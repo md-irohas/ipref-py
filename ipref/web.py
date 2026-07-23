@@ -15,6 +15,7 @@ from flask import (
 )
 from flask.cli import FlaskGroup
 
+from . import __version__
 from .__main__ import setup_logger
 from .config import Config
 from .data.dns import get_nameservers, set_nameservers
@@ -89,6 +90,7 @@ def make_flag(cc):
 @bp.app_context_processor
 def register_context_processor():
     return dict(
+        version=__version__,
         get_dot_item=get_dot_item,
         get_header_name=get_header_name,
         escape_column=escape_column,

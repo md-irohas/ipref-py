@@ -2,6 +2,7 @@ from pathlib import Path
 
 import pytest
 
+from ipref import __version__
 from ipref.web import (
     apiv1_columns,
     apiv1_data_in_request,
@@ -93,6 +94,12 @@ def test_web_index_get(client):
 
 def test_web_search_get(client):
     assert client.get("/search").status_code == 200
+
+
+def test_web_search_get_shows_version(client):
+    res = client.get("/search")
+    assert res.status_code == 200
+    assert f"v{__version__}" in res.text
 
 
 def test_web_search_post(client):
