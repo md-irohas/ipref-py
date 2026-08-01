@@ -1,5 +1,6 @@
-# This workflow builds and releases the package when pushed to the main or
-# release branches with a new version string in pyproject.toml.
+# This workflow builds the package, creates a GitHub release, and publishes it
+# to PyPI when a pull request with a new version is merged into the main or
+# release branches, or when manually dispatched for one of those branches.
 name: Build and Release
 
 on:
@@ -21,7 +22,14 @@ jobs:
       (
         github.event_name == 'pull_request' &&
         github.event.pull_request.merged == true
-      ) || github.event_name == 'workflow_dispatch'
+      ) || (
+        github.event_name == 'workflow_dispatch' &&
+        github.ref_type == 'branch' &&
+        (
+          github.ref_name == 'main' ||
+          startsWith(github.ref_name, 'release/v')
+        )
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 3
     outputs:
@@ -126,6 +134,15 @@ jobs:
       run: |
         uv build
 
+    # NOTE: The same artifacts are handed to the publish job so that the
+    # packages uploaded to PyPI are exactly the ones attached to the release.
+    - name: Upload packages as an artifact
+      uses: actions/upload-artifact@v7
+      with:
+        name: dist
+        path: dist/
+        if-no-files-found: error
+
     # NOTE: The write permission is declared in the top-level `permissions` block.
     - name: Release package
       uses: goreleaser/goreleaser-action@v7
@@ -134,3 +151,34 @@ jobs:
         args: release --clean
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Publish the built packages to PyPI via Trusted Publishers (OIDC).
+  # NOTE: This job is skipped automatically when `release` is skipped.
+  publish-pypi:
+    runs-on: ubuntu-latest
+    needs: [tag, release]
+    timeout-minutes: 5
+
+    # NOTE: The environment must match the one registered on PyPI's
+    # Trusted Publisher settings. It also allows a manual approval gate.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/ipref
+
+    # NOTE: id-token:write is required to mint the OIDC token for PyPI.
+    # This overrides the top-level `permissions` block, so contents is
+    # narrowed down to read.
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Download packages built in the release job
+      uses: actions/download-artifact@v8
+      with:
+        name: dist
+        path: dist/
+
+    # NOTE: No API token is needed; the action exchanges the OIDC token.
+    - name: Publish packages to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
