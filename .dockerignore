@@ -15,7 +15,7 @@ AGENTS.md
 CONTRIBUTING.md
 README-dev.md
 Makefile
-Makefile.orig
+Makefile.example
 
 # build artifacts
 build/

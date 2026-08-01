@@ -41,7 +41,7 @@ This project uses the flat layout.
 
 - `.claude/`: Claude Code settings **(not tracked)**
 - `.devcontainer/`
-    - `devcontainer.json.orig`: Template of the DevContainer configuration
+    - `devcontainer.example.json`: Template of the DevContainer configuration
     - `devcontainer.json`: DevContainer configuration **(not tracked)**
 - `.github/`
     - `ISSUE_TEMPLATE/`: Issue templates
@@ -68,7 +68,7 @@ This project uses the flat layout.
 - `AGENTS.md`: Instructions for AI coding agents
 - `CHANGELOG.md`
 - `LICENSE`
-- `Makefile.orig`: Template of the task Makefile
+- `Makefile.example`: Template of the task Makefile
 - `README.md`
 - `pyproject.toml`
 - `requirements-dev.txt`: Snapshot of the libraries for development/testing
@@ -87,7 +87,7 @@ The following two environments are supported:
 - DevContainer environment (w/ VSCode):
     - Develop and run tests inside a docker container.
 
-In both environments, the development tasks are defined in `Makefile.orig`.
+In both environments, the development tasks are defined in `Makefile.example`.
 
 
 ### Local environment
@@ -99,7 +99,7 @@ https://docs.astral.sh/uv/getting-started/installation/
 Create a `Makefile`:
 
 ```sh
-$ cp -vi Makefile.orig Makefile
+$ cp -vi Makefile.example Makefile
 ```
 
 Install the libraries for development with `uv`:
@@ -118,9 +118,9 @@ Create a `devcontainer.json` and a `Makefile`:
 ```sh
 # Copy the DevContainer configuration and edit it for your environment if
 # necessary. devcontainer.json is not tracked by git.
-$ cp -vi .devcontainer/devcontainer.json.orig .devcontainer/devcontainer.json
+$ cp -vi .devcontainer/devcontainer.example.json .devcontainer/devcontainer.json
 
-$ cp -vi Makefile.orig Makefile
+$ cp -vi Makefile.example Makefile
 ```
 
 Run "Dev Containers: Rebuild and Reopen in Container" from the command
