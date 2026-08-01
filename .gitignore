@@ -3,8 +3,8 @@
 *.swp
 .DS_Store
 
-# Claude Code (personal overrides)
-.claude/settings.local.json
+# Claude Code (personal settings)
+.claude/
 
 # build
 /build/

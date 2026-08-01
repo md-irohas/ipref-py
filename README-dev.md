@@ -39,10 +39,7 @@ This project basically follows the coding conventions below.
 
 This project uses the flat layout.
 
-- `.claude/`
-    - `settings.json`: Claude Code project settings (asks for confirmation
-      before `git commit`/`git push` and install commands)
-    - `settings.local.json`: Personal overrides **(not tracked)**
+- `.claude/`: Claude Code settings **(not tracked)**
 - `.devcontainer/`
     - `devcontainer.json.orig`: Template of the DevContainer configuration
     - `devcontainer.json`: DevContainer configuration **(not tracked)**
