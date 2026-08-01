@@ -4,63 +4,63 @@
 ![Tests](https://github.com/md-irohas/ipref-py/actions/workflows/test.yml/badge.svg)
 
 
-`ipref-py` is a simple utility to look up IP addresses in MaxMind's GeoIP
-downloadable databases by command-line and web.
+`ipref-py` is a simple utility to look up IP addresses in MaxMind's
+downloadable GeoIP databases, from the command line or from a web browser.
 
-I often look up geolocation data of a number of IP addresses in my research,
-but existing tools do not satisfy this need.
-So, I wrote `ipref-py`.
+I often need to look up geolocation data for large numbers of IP addresses in
+my research, but the existing tools did not fit that workflow well.
+So I wrote `ipref-py`.
 
-Note that the web interface must be used for internal use only such as your own
-environment and your lab. If you make it public, it can be abused for attackers
-and may also violate terms of use by MaxMind.
+Note that the web interface is intended for internal use only, such as on your
+own machine or within your lab. If you expose it publicly, it can be abused by
+attackers and may also violate MaxMind's terms of use.
 
 Main features:
 
-- Look up IP addresses by MaxMind's GeoIP databases.
-- Look up hostnames of IP addresses by DNS reverse lookups.
-- A command line and a simple web interface.
-- Configuration by YAML files.
-- Flexible outputs (JSON, JSON-Lines, CSV, TSV).
+- Look up IP addresses in MaxMind's GeoIP databases.
+- Resolve hostnames of IP addresses by reverse DNS lookups.
+- A command-line tool and a simple web interface.
+- Configuration via YAML files.
+- Flexible output formats (JSON, JSON-Lines, CSV, TSV).
 
 
 ## Requirements
 
 - Python 3.9 or later
-- Linux or macOS (It may work in Windows but I have not checked yet.)
+- Linux or macOS (It may work on Windows, but this has not been tested.)
 
 
 ## Installation
 
-(Optional, but recommended) Create a virtualenv environment for Python.
+(Optional, but recommended) Create a Python virtual environment.
 
 ```sh
 # /path/to/dir/ depends on your environment. e.g. /opt/ipref/
 $ cd /path/to/dir/
 
-# Create a virtualenv
+# Create a virtual environment
 $ python3 -m venv env
 
-# Activate the virtualenv
+# Activate the virtual environment
 $ source env/bin/activate
 ```
 
-You can install `ipref-py` via pypi (plus, the wheel file is available from
-[GitHub release](https://github.com/md-irohas/ipref-py/releases) page).
+You can install `ipref-py` from PyPI. Wheel files are also available from the
+[GitHub releases](https://github.com/md-irohas/ipref-py/releases) page.
 
 ```sh
-# if you want CLI only
+# CLI only
 (env) $ pip install ipref
 
-# if you want CLI and web interface
+# CLI and web interface
 (env) $ pip install ipref[web]
 ```
 
 
 ## Configuration
 
-Make a configuration file.
-The template files for configurations are available.
+Create a configuration file.
+The following configuration templates are available:
 
 - GeoIP2: https://github.com/md-irohas/ipref-py/blob/main/ipref/config.yaml.orig
 - GeoLite: https://github.com/md-irohas/ipref-py/blob/main/ipref/config-geolite.yaml.orig
@@ -74,10 +74,10 @@ Configuration files are loaded from the following paths:
 - (environment variable `IPREF_CONF`)
 - (command line argument [CLI only])
 
-The latter file overwrites the former one.
+Settings from files listed later override those from earlier ones.
 
 ```sh
-# Copy the configuration template above and edit it.
+# Copy one of the configuration templates above and edit it.
 $ vim ~/.config/ipref.yaml
 ...(edit)...
 ```
@@ -118,9 +118,9 @@ options:
 ```
 
 
-### Example-1: First step
+### Example-1: First steps
 
-The following example looks up "1.1.1.1" and "8.8.8.8" from command line and dumps the results as CSV format.
+The following example looks up "1.1.1.1" and "8.8.8.8" from the command line and prints the results in CSV format.
 
 ```sh
 $ ipref -O csv "1.1.1.1" "8.8.8.8"
@@ -132,8 +132,8 @@ meta.raw_input,meta.ip_address_types,geoip.city.continent.names.en,geoip.city.co
 
 ### Example-2: Flexible output
 
-You can specify columns to be printed in CSV/TSV formats.
-See `output.columns` section in `config.yaml.orig` for the list of column names.
+You can specify which columns are printed in the CSV/TSV formats.
+See the `output.columns` section in `config.yaml.orig` for the list of column names.
 
 ```sh
 $ ipref -O csv --csv-columns meta.raw_input,geoip.city.country.name "1.1.1.1" "8.8.8.8"
@@ -142,12 +142,12 @@ meta.raw_input,geoip.city.country.name
 8.8.8.8,United States
 ```
 
-You can also set columns in the configuration file.
+You can also set the columns in the configuration file.
 
 
 ### Example-3: Bulk search
 
-To look up a number of IP addresses, you can pass them through files.
+To look up many IP addresses at once, you can pass them via files.
 
 ```sh
 # from stdin
@@ -160,25 +160,25 @@ $ ipref -I file -O csv file1.txt file2.txt ...
 
 ## Web Examples
 
-A simple web app is also avaialble.
+A simple web app is also available.
 
 ![Screenshot](./screenshot.png)
 
 
 ### Example-4: Launch a web app
 
-Launch ipref-web from command line and access http://localhost:5000/ .
-A simple web interface like the above figure is shown.
+Launch ipref-web from the command line and open http://localhost:5000/.
+You will see a simple web interface like the one in the figure above.
 
 ```sh
 $ IPREF_CONF="path/to/config.yaml" ipref-web run
 ```
 
-Input IP addresses, select checkboxes, and click "Search" button!
-The "Look-up Items" are also configurable by config.yaml.
+Enter IP addresses, select the checkboxes you need, and click the "Search" button.
+The "Look-up Items" are also configurable in config.yaml.
 
 
-### Example-5: Run as a production WSGI app 
+### Example-5: Run as a production WSGI app
 
 Use gunicorn to run ipref-web as a production WSGI app.
 
@@ -188,32 +188,32 @@ $ gunicorn --env IPREF_CONF="path/to/config.yaml" "ipref.web:create_app()"
 
 Template files for systemd (as a unit) and nginx (as a reverse proxy) are also available:
 
-- Systemd's unit file: [etc/ipref-web.service](etc/ipref-web.service)
-- Nginx configuration file: [etc/nginx.conf](etc/nginx.conf)
+- systemd unit file: [etc/ipref-web.service](etc/ipref-web.service)
+- nginx configuration file: [etc/nginx.conf](etc/nginx.conf)
 
 
-### Example-6: API Search by cURL
+### Example-6: API search with cURL
 
-You can retrieve geolocation data of IP addresses by `curl` command (since v0.3.0).
-The output format is CSV (comma-sparated values) for now.
+You can retrieve geolocation data for IP addresses with the `curl` command (since v0.3.0).
+For now, the only output format is CSV (comma-separated values).
 
 ```sh
 $ curl -X POST -F columns=meta.raw_input,meta.ip_address_types -F data=@path/to/ip-list.txt http://127.0.0.1:5000/api/v1/search?csv_noheader=1\&csv_nocomma=1
 ```
 
-- `columns`: List of column names separeted by comma (,).
-  See `output.columns` values in [ipref/config.yaml.orig](ipref/config.yaml.orig) for the column names.
-  If ommited, the items whose `checked` values are true in `web.search` are used as default.
-- `data`: Path to a file which includes a list of IP addresses separeted by newlines (\n).
-- `csv_noheader`: If set 1, the CSV header is not shown (default: 0).
-- `csv_nocomma`: If set 1, commas in the output are replaced by '\<comma\>' (default: 0).
-  This is useful when you pass results to command like `cut`.
+- `columns`: List of column names separated by commas (,).
+  See the `output.columns` values in [ipref/config.yaml.orig](ipref/config.yaml.orig) for the available column names.
+  If omitted, the items whose `checked` values are true in `web.search` are used by default.
+- `data`: Path to a file containing a list of IP addresses separated by newlines (\n).
+- `csv_noheader`: If set to 1, the CSV header is not printed (default: 0).
+- `csv_nocomma`: If set to 1, commas in the output are replaced by '\<comma\>' (default: 0).
+  This is useful when you pass the results to commands such as `cut`.
 
 
 ## Alternatives
 
-- mmdbinspect: https://github.com/maxmind/mmdbinspect (Official command-line lookup tool)
-- geoiplookup
+- mmdbinspect: https://github.com/maxmind/mmdbinspect (MaxMind's official command-line lookup tool)
+- geoiplookup command
 
 
 ## Contributing
